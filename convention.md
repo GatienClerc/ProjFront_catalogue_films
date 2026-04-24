@@ -39,8 +39,7 @@ addMoney(amount){
 ### description
 - le nom des fonctions et des variables doivent être en anglais.
 - le nom des fonctions et des variables doivent signifier quelque chose.
-- les fonctions, les variables globales et les classes sont en camelCase.
-- les variables locales et les fichiers sont en snake_case.
+- les fonctions et les variables sont en camelCase.
 
 ### exemple
 ```js
@@ -66,6 +65,7 @@ export default class nameExample {
 ### description
 - les noms des fichiers doivent être en anglais.
 - les noms des fichiers doivent signifier quelque chose.
+- les fichier .vue sont en camelCase
 - les fichiers sont en snake_case.
 
 ---
