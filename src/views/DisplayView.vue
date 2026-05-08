@@ -1,9 +1,10 @@
 <script setup>
-import TheWelcome from '../components/TheWelcome.vue'
+import { useRoute } from 'vue-router'
+const route = useRoute()
 </script>
 
 <template>
-  <main>
-    <TheWelcome />
+  <main class="h1 p-1">
+    Id du film: {{ route.params.id }}
   </main>
 </template>
