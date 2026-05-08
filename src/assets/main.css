@@ -7,13 +7,17 @@
 
 a {
   text-decoration: none;
-  color: hsl(240 57% 50%);
+  color: hsl(240 100% 66%);
   transition: 0.4s;
   padding: 3px;
 }
 
 @media (hover: hover) {
   a:hover {
-    background-color: hsl(240 57% 50% / 0.2);
+    background-color: hsl(240 100% 66% / 0.2);
   }
+}
+
+header {
+  background-color: var(--color-background-soft);
 }
