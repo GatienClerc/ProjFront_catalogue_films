@@ -3,7 +3,7 @@ import { RouterLink, RouterView } from 'vue-router'
 </script>
 
 <template>
-  <header class="yp-2 shadow">
+  <header class="py-2 shadow sticky-top">
     <div class="container">
       <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
         <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0 text h5">
@@ -31,5 +31,8 @@ import { RouterLink, RouterView } from 'vue-router'
       </div>
     </div>
   </header>
-  <RouterView />
+  <RouterView class="px-5 py-2"/>
+  <footer class="position-absolute bottom-0 start-0 w-100 border-top p-2">
+    <p class="col-12 col-lg-auto">2026 © CPNV | Thierry Perroud, Gatien Clerc, Cédric Jankiewicz</p>
+  </footer>
 </template>
