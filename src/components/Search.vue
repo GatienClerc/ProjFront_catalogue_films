@@ -4,10 +4,10 @@ const movieStore = useMovieStore()
 </script>
 
 <template>
-  <div v-if="movieStore.movies.length > 0" class="position-absolute start-0 w-100 bg-white shadow z-2 search">
+  <div v-if="movieStore.movies.length > 0" class="position-absolute start-0 w-100 shadow z-2 search">
     <div class="container">
       <ul class="list-group list-group-flush">
-        <li v-for="film in movieStore.movies" :key="film.id" class="list-group-item list-group-item-action">
+        <li v-for="film in movieStore.movies" :key="film.id" class="list-group-item list-group-item-action search-item">
           {{ film.title }}
         </li>
       </ul>
