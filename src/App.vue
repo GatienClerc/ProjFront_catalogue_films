@@ -36,3 +36,17 @@ import { RouterLink, RouterView } from 'vue-router'
     <p class="col-12 col-lg-auto">2026 © CPNV | Thierry Perroud, Gatien Clerc, Cédric Jankiewicz</p>
   </footer>
 </template>
+
+<style>
+header {
+  background-color: var(--color-background-soft);
+}
+.input-group-text, .form-control, .form-control:focus {
+  background-color: var(--color-background-soft);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+.form-control::placeholder {
+  color: var(--color-text);
+}
+</style>
