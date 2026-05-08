@@ -7,7 +7,7 @@ const movieStore = useMovieStore()
   <div v-if="movieStore.movies.length > 0" class="position-absolute start-0 w-100 shadow z-2 search">
     <div class="container">
       <ul class="list-group list-group-flush">
-        <li v-for="film in movieStore.movies" :key="film.id" class="list-group-item list-group-item-action search-item">
+        <li v-for="film in movieStore.movies" :key="film.id" class="result list-group-item list-group-item-action search-item">
           {{ film.title }}
         </li>
       </ul>
@@ -25,5 +25,13 @@ const movieStore = useMovieStore()
   max-height: 35vh;
 
   z-index: 1000;
+}
+.result {
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+.result:hover {
+  background-color: var(--color-border) !important;
+  color: var(--color-text) !important;
 }
 </style>
