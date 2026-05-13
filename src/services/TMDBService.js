@@ -34,7 +34,7 @@ export default {
      * @param {string} query
      */
     searchMovies(query) {
-        return apiClient.get(`/search/movie?query=${query}`, {
+        return apiClient.get(`/search/multi?query=${query}`, {
         })
     }
 }

@@ -18,7 +18,7 @@ export const useMovieStore = defineStore('movies', {
 
             try {
                 const response = await TMDBService.searchMovies(query)
-                this.movies = response.data.results ?? []
+                this.movies = response.data.results
             } catch (error) {
                 console.error('Erreur TMDB:', error)
                 this.movies = []
