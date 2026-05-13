@@ -16,7 +16,7 @@ import axios from 'axios'
  * API connexion
  **********************************************************************************************************************/
 const apiClient = axios.create({
-    baseURL: 'https://api.themoviedb.org/3/',
+    baseURL: '/tmdb/3/',
     withCredentials: true,
     headers: {
         Accept: 'application/json',
@@ -29,5 +29,12 @@ const apiClient = axios.create({
  * Functions
  **********************************************************************************************************************/
 export default {
-    // TODO: Create functions
+    /**
+     * Search movies by query
+     * @param {string} query
+     */
+    searchMovies(query) {
+        return apiClient.get(`/search/multi?query=${query}`, {
+        })
+    }
 }

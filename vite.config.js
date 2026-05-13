@@ -15,4 +15,14 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  server: {
+    proxy: {
+      '/tmdb': {
+        target: 'https://api.themoviedb.org',
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/tmdb/, '')
+      }
+    }
+  }
+
 })

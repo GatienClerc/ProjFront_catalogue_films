@@ -1,5 +1,15 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
+import { ref, watch } from 'vue'
+import { useMovieStore } from '@/stores/movieStore'
+import SearchResults from '@/components/Search.vue'
+
+const movieStore = useMovieStore()
+const search = ref('')
+
+watch(search, (newValue) => {
+  movieStore.searchMovies(newValue)
+})
 </script>
 
 <template>
@@ -13,15 +23,11 @@ import { RouterLink, RouterView } from 'vue-router'
 
         <form class="col-11 col-lg-auto mb-3 mb-lg-0 me-lg-3 flex-grow-1 mx-3" style="max-width: 350px;">
           <div class="input-group">
-          <span class="input-group-text">
-            <i class="bi bi-search fs-5"></i>
-          </span>
-            <input
-                type="search"
-                class="form-control"
-                placeholder="Search..."
-                aria-label="Search"
-            >
+            <span class="input-group-text">
+              <i class="bi bi-search fs-5"></i>
+            </span>
+
+            <input v-model="search" type="search" class="form-control" placeholder="Search..."/>
           </div>
         </form>
 
