@@ -8,16 +8,20 @@ export const useMovieStore = defineStore('movies', {
     }),
 
     actions: {
-        async searchMovies(query) {
+        async searchMedia(type, query) {
             if (!query || !query.trim()) {
                 this.movies = []
                 return
             }
 
+            if (type !== "movie" || type !== "tv") {
+                type = "multi"
+            }
+
             this.loading = true
 
             try {
-                const response = await TMDBService.searchMovies(query)
+                const response = await TMDBService.searchMedia(type, query)
                 this.movies = response.data.results
             } catch (error) {
                 console.error('Erreur TMDB:', error)
