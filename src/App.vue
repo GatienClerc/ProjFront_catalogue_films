@@ -48,7 +48,7 @@ watch(search, (newValue) => {
   </footer>
 </template>
 
-<style>
+<style scoped>
 header {
   background-color: var(--color-background-soft);
 }
