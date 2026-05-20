@@ -38,10 +38,12 @@ watch(search, (newValue) => {
     </div>
   </header>
   <SearchResults></SearchResults>
+  <div id="app" class="d-flex flex-column min-vh-100">
   <RouterView class="px-5 py-2"/>
-  <footer class="position-absolute bottom-0 start-0 w-100 border-top p-2">
+  <footer class="w-100 border-top p-2">
     <p class="col-12 col-lg-auto">2026 © CPNV | Thierry Perroud, Gatien Clerc, Cédric Jankiewicz</p>
   </footer>
+  </div>
 </template>
 
 <style scoped>
