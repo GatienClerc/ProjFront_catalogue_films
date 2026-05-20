@@ -8,7 +8,7 @@ const movieStore = useMovieStore()
 const search = ref('')
 
 watch(search, (newValue) => {
-  movieStore.searchMovies(newValue)
+  movieStore.searchMedia("multi", newValue)
 })
 </script>
 
