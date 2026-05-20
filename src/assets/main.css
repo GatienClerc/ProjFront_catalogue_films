@@ -17,3 +17,9 @@ a {
     background-color: hsl(240 100% 66% / 0.2);
   }
 }
+
+.card {
+  background-color: var(--color-background-soft);
+  border: var(--color-border);
+  color: var(--color-text);
+}
