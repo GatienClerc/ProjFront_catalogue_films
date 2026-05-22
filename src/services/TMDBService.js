@@ -4,8 +4,8 @@
  * Author :                 Thierry Perroud
  * Creation date :          06.05.2026
  * Modified by :            Thierry Perroud
- * Modification date :      20.05.2026
- * Version :                0.3
+ * Modification date :      22.05.2026
+ * Version :                0.4
  **********************************************************************************************************************/
 /***********************************************************************************************************************
  * Imports
@@ -33,7 +33,7 @@ export default {
      * Returns the list of all supported languages
      * Route documentation: https://developer.themoviedb.org/reference/configuration-languages
      *
-     * @returns The list of all supported languages
+     * @returns JSON
      */
     getLanguages() {
         return apiClient.get('/configuration/languages')
@@ -44,10 +44,12 @@ export default {
      * Route documentations: https://developer.themoviedb.org/reference/genre-movie-list
      *                       https://developer.themoviedb.org/reference/genre-tv-list
      *
-     * @param type Enum(movie, tv)
-     * @returns The list of all movie genres in French
+     * @param type Enum("movie", "tv")
+     * @returns JSON
      */
-    getGenres(type) {
+    getGenres(type = "movie") {
+        if (type !== "movie" || type !== "tv") type = "movie"   // Defaults to movies
+
         return apiClient.get(`/genre/${type}/list?language=fr`)
     },
 
@@ -57,15 +59,17 @@ export default {
      *                       https://developer.themoviedb.org/reference/search-tv
      *                       https://developer.themoviedb.org/reference/search-multi
      *
-     * @param type Enum (movie, tv, multi)
+     * @param type Enum ("movie", "tv", "multi")
      * @param query String containing name filter
-     * @returns A list of movies based on a query
+     * @param page Integer representing the page number of the returned list (must be 1 or more)
+     * @returns JSON
      */
-    searchMedia(type, query) {
-        // A query is mandatory
-        if (!query) return
+    searchMedia(type = "movie", query, page = 1) {
+        if (!query) return JSON.parse('{"error": "A query is mandatory."}')
+        if (type !== "movie" || type !== "tv" || type !== "multi") type = "movie"   // Defaults to movies
+        if (!page || page < 1) page = 1                                             // Defaults to page 1
 
-        return apiClient.get(`/search/${type}?query=${query}&language=fr`)
+        return apiClient.get(`/search/${type}?query=${query}&language=fr&page=${page}`)
     },
 
     /**
@@ -73,16 +77,94 @@ export default {
      * Route documentations: https://developer.themoviedb.org/reference/discover-movie
      *                       https://developer.themoviedb.org/reference/discover-tv
      *
-     * @param type Enum (movie, tv)
-     * @param params JSON with name and value of each params
-     * @returns A filtered movie list
+     * @param type Enum ("movie", "tv")
+     * @param filters JSON with name and value of each filter
+     * @param page Integer representing the page number of the returned list (must be 1 or more)
+     * @returns JSON
      */
-    filterMedia(type, params) {
-        let url = `/discover/${type}?language=fr`
+    filterMedia(type = "movie", filters, page = 1) {
+        if (type !== "movie" || type !== "tv") type = "movie"   // Defaults to movies
+        if (!page || page < 1) page = 1                         // Defaults to page 1
+        let url = `/discover/${type}?language=fr&page=${page}`
 
         // Adds all the params to the URL
-        for (let param in params) url += `&${param.name}=${param.value}`
+        if (filters) for (let filter in filters) url += `&${filter.name}=${filter.value}`
 
         return apiClient.get(url)
+    },
+
+    /**
+     * Returns a list of cast members for the movie or TV show
+     * Route documentations: https://developer.themoviedb.org/reference/movie-credits
+     *                       https://developer.themoviedb.org/reference/tv-series-credits
+     *
+     * @param type Enum("movie", "tv")
+     * @param mediaId Integer representing the ID of the movie or TV show (must be 0 or more)
+     * @returns JSON
+     */
+    getMediaCredits(type = "movie", mediaId) {
+        if (mediaId === null || mediaId < 0) return JSON.parse('{"error": "Invalid media ID."}')
+        if (type !== "movie" || type !== "tv") type = "movie"   // Defaults to movies
+
+        return apiClient.get(`/${type}/${mediaId}/credits`)
+    },
+
+    /**
+     * Returns the details of a specific movie or TV show based on its ID
+     * Route documentations: https://developer.themoviedb.org/reference/movie-details
+     *                       https://developer.themoviedb.org/reference/tv-series-details
+     *
+     * @param type Enum("movie", "tv")
+     * @param mediaId Integer representing the ID of the movie or TV show (must be 0 or more)
+     * @param season Integer representing a TV show's season number (must be 1 or more)
+     * @returns JSON
+     */
+    getMediaDetails(type = "movie", mediaId, season = 1) {
+        if (mediaId === null || mediaId < 0) return JSON.parse('{"error": "Invalid media ID"}')
+        if (type !== "movie" || type !== "tv") type = "movie"   // Defaults to movies
+        let url = `/${type}/${mediaId}`
+
+        if (type === "tv") {
+            // Defaults to season 1 if no season number is given, or if lower than 1
+            if (!season || season < 1) season = 1
+            url += `/season/${season}`
+        }
+
+        // Defaults to French
+        url += `?language=fr`
+
+        return apiClient.get(url)
+    },
+
+    /**
+     * Returns a list of trending movie, TV shows and people based on the current day or current week
+     * Route documentation: https://developer.themoviedb.org/reference/trending-all
+     *
+     * @param time Enum("day", "week")
+     * @returns JSON
+     */
+    getTrendingMedias(time = "day") {
+        if (time !== "day" && time !== "week") time = "day"
+
+        return apiClient.get(`/trending/all/${time}`)
+    },
+
+    /**
+     * Returns a list of movies that are currently in theatre
+     * Route documentation: https://developer.themoviedb.org/reference/movie-now-playing-list
+     *
+     * @returns JSON
+     */
+    getMoviesInTheatre() {
+        return apiClient.get(`/movie/now_playing`)
+    },
+
+    /**
+     * Returns a list of TV shows that are airing today
+     *
+     * @returns JSON
+     */
+    getShowsAiringToday() {
+        return apiClient.get(`/tv/airing_today`)
     }
 }
