@@ -39,7 +39,7 @@ watch(search, (newValue) => {
   </header>
   <SearchResults></SearchResults>
   <div id="app" class="d-flex flex-column min-vh-100">
-  <RouterView class="px-5 py-2"/>
+  <RouterView/>
   <footer class="w-100 border-top p-2">
     <p class="col-12 col-lg-auto">2026 © CPNV | Thierry Perroud, Gatien Clerc, Cédric Jankiewicz</p>
   </footer>
