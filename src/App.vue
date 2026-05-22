@@ -4,6 +4,7 @@ import { ref, watch } from 'vue'
 import { useMovieStore } from '@/stores/movieStore'
 import SearchResults from '@/components/Search.vue'
 import Carousel from '@/components/Carousel.vue'
+import Card from "@/components/Card.vue";
 
 const movieStore = useMovieStore()
 const search = ref('')
@@ -40,7 +41,11 @@ watch(search, (newValue) => {
   </header>
   <SearchResults></SearchResults>
 
-  <Carousel></Carousel>
+  <Carousel>
+    <template #default="{ card }">
+      <Card :movie="card" />
+    </template>
+  </Carousel>
 
   <RouterView class="px-5 py-2"/>
   <footer class="position-absolute bottom-0 start-0 w-100 border-top p-2">
@@ -52,11 +57,13 @@ watch(search, (newValue) => {
 header {
   background-color: var(--color-background-soft);
 }
+
 .input-group-text, .form-control, .form-control:focus {
   background-color: var(--color-background-soft);
   border: 1px solid var(--color-border);
   color: var(--color-text);
 }
+
 .form-control::placeholder {
   color: var(--color-text);
 }

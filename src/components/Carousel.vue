@@ -1,20 +1,13 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useMovieStore } from '@/stores/movieStore'
+import {useMockMovieStore} from "@/stores/mockMovieStore.js";
 
-const cards = ref([
-  { id: 1, title: "Michel", date: "22/04/2026", image: "https://via.placeholder.com/150x220" },
-  { id: 2, title: "Concert", date: "20/05/2026", image: "https://via.placeholder.com/150x220" },
-  { id: 3, title: "Event", date: "15/06/2026", image: "https://via.placeholder.com/150x220" },
-  { id: 4, title: "Show", date: "10/07/2026", image: "https://via.placeholder.com/150x220" },
-  { id: 5, title: "Music", date: "01/08/2026", image: "https://via.placeholder.com/150x220" },
-  { id: 6, title: "Live", date: "12/09/2026", image: "https://via.placeholder.com/150x220" },
-  { id: 7, title: "test", date: "22/04/2026", image: "https://via.placeholder.com/150x220" },
-  { id: 8, title: "test2", date: "20/05/2026", image: "https://via.placeholder.com/150x220" },
-  { id: 9, title: "test3", date: "15/06/2026", image: "https://via.placeholder.com/150x220" },
-  { id: 10, title: "test4", date: "10/07/2026", image: "https://via.placeholder.com/150x220" },
-  { id: 11, title: "test5", date: "01/08/2026", image: "https://via.placeholder.com/150x220" },
-  { id: 12, title: "test6", date: "12/09/2026", image: "https://via.placeholder.com/150x220" }
-])
+const store = useMockMovieStore()
+
+//const store = useMovieStore()
+const cards = computed(() => store.movies)
+
 
 const chunkSize = ref(6)
 
@@ -34,7 +27,7 @@ const updateChunkSize = () => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   updateChunkSize()
   window.addEventListener('resize', updateChunkSize)
 })
@@ -45,8 +38,17 @@ onUnmounted(() => {
 
 const slides = computed(() => {
   const result = []
-  for (let i = 0; i < cards.value.length; i += chunkSize.value) {
-    result.push(cards.value.slice(i, i + chunkSize.value))
+  const total = cards.value.length
+
+  for (let i = 0; i < total; i++) {
+    const group = []
+
+    for (let j = 0; j < chunkSize.value; j++) {
+      const index = (i + j) % total
+      group.push(cards.value[index])
+    }
+
+    result.push(group)
   }
   return result
 })
@@ -54,7 +56,6 @@ const slides = computed(() => {
 
 <template>
   <div class="container-fluid mt-4">
-    <h4 class="mb-3">POPULAIRES</h4>
     <div id="carousel" class="carousel slide custom-carousel">
 
       <button class="carousel-control-prev" type="button" data-bs-target="#carousel" data-bs-slide="prev">
@@ -63,13 +64,10 @@ const slides = computed(() => {
 
       <div class="carousel-inner">
         <div v-for="(slide, index) in slides" :key="index" class="carousel-item" :class="{ active: index === 0 }">
-          <div class="row g-3">
-            <div v-for="card in slide" :key="card.id" class="col-12 col-sm-6 col-md-3 col-xl-2">
+          <div class="row gx-3 justify-content-evenly">
+            <div v-for="card in slide" :key="card.id" class="col-auto">
 
-              <div class="card custom-card h-100">
-                <img :src="card.image" class="card-img">
-                <small class="text-muted">{{ card.title }} {{ card.date }}</small>
-              </div>
+              <slot :card="card" />
 
             </div>
           </div>
@@ -86,11 +84,15 @@ const slides = computed(() => {
 
 
 <style scoped>
+.carousel{
+  color: var(--color-text);
+}
+
 .custom-carousel {
-  border-top: 2px solid #ccc;
-  border-bottom: 2px solid #ccc;
+  border-top: 2px solid var(--color-border);
+  border-bottom: 2px solid var(--color-border);
   padding: 20px 40px;
-  position: relative;
+  background: var(--color-background);
 }
 
 .carousel-inner {
@@ -98,14 +100,14 @@ const slides = computed(() => {
 }
 
 .custom-card {
-  border: 1px solid #ddd;
-  background: transparent;
-  color: white;
+  border: 1px solid var(--color-border);
+  background: var(--color-background-soft);
+  color: var(--color-text);
 }
 
 .card img {
   width: 100%;
-  height: 200px;
+  height: auto;
   object-fit: cover;
 }
 
@@ -118,27 +120,33 @@ const slides = computed(() => {
   width: 50px;
 }
 
-.carousel-control-prev {
-  left: 0;
+.carousel-control-next-icon,
+.carousel-control-prev-icon {
+  filter: brightness(0);
 }
 
-.carousel-control-next {
-  right: 0;
-}
-.card img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
+@media (prefers-color-scheme: dark) {
+  .carousel-control-next-icon,
+  .carousel-control-prev-icon {
+    filter: brightness(0) invert(1); /* flèche blanche */
+  }
 }
 
-/* mobile */
+.custom-card {
+  transition: all 0.3s ease;
+}
+
+.custom-card:hover {
+  transform: scale(1.03);
+  border-color: var(--color-border-hover);
+}
+
 @media (max-width: 576px) {
   .card img {
     height: 140px;
   }
 }
 
-/* tablette */
 @media (max-width: 992px) {
   .card img {
     height: 160px;
