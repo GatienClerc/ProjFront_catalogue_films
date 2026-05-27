@@ -118,12 +118,18 @@ const slides = computed(() => {
   width: 50px;
 }
 
+.carousel-control-next-icon,
+.carousel-control-prev-icon {
+  filter: invert(1);
+}
+
 @media (prefers-color-scheme: dark) {
   .carousel-control-next-icon,
   .carousel-control-prev-icon {
-    filter: brightness(0) invert(1); /* flèche blanche */
+    filter: none;
   }
 }
+
 
 @media (max-width: 576px) {
   .card img {
