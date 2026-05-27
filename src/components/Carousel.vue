@@ -118,38 +118,6 @@ const slides = computed(() => {
   width: 50px;
 }
 
-.carousel-control-next-icon,
-.carousel-control-prev-icon {
-  filter: brightness(0);
-}
-
-.carousel-item .col-auto {
-  opacity: 1;
-  transform: translateX(50px);
-}
-
-.carousel-item.active .col-auto {
-  animation: slideInCard 0.5s ease forwards;
-}
-
-@keyframes slideInCard {
-  from {
-    transform: translateX(40px);
-    opacity: 0.8;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-.carousel-item.active .col-auto:nth-child(1) { animation-delay: 0.05s; }
-.carousel-item.active .col-auto:nth-child(2) { animation-delay: 0.1s; }
-.carousel-item.active .col-auto:nth-child(3) { animation-delay: 0.15s; }
-.carousel-item.active .col-auto:nth-child(4) { animation-delay: 0.2s; }
-.carousel-item.active .col-auto:nth-child(5) { animation-delay: 0.25s; }
-.carousel-item.active .col-auto:nth-child(6) { animation-delay: 0.3s; }
-
 @media (prefers-color-scheme: dark) {
   .carousel-control-next-icon,
   .carousel-control-prev-icon {
