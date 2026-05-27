@@ -3,14 +3,20 @@ import TMDBService from '@/services/TMDBService'
 
 export const useMovieStore = defineStore('movies', {
     state: () => ({
-        movies: [],
-        loading: false
+        search_movies: [],
+        search_loading: false,
+
+        trending: {},
+        trending_loading: false,
+
+        in_theater: {},
+        in_theater_loading: false
     }),
 
     actions: {
         async searchMedia(type, query) {
             if (!query || !query.trim()) {
-                this.movies = []
+                this.search_movies = []
                 return
             }
 
@@ -22,13 +28,25 @@ export const useMovieStore = defineStore('movies', {
 
             try {
                 const response = await TMDBService.searchMedia(type, query)
-                this.movies = response.data.results
+                this.search_movies = response.data.results
             } catch (error) {
                 console.error('Erreur TMDB:', error)
-                this.movies = []
+                this.search_movies = []
             } finally {
                 this.loading = false
             }
+        },
+        async getTrendingMedias(){
+            this.trending_loading = true
+            const response = await TMDBService.getTrendingMedias()
+            this.trending = response.data.results
+            this.trending_loading = true
+        },
+        async getMoviesInTheatre() {
+            this.in_theater_loading = true
+            const response = await TMDBService.getMoviesInTheatre()
+            this.in_theater = response.data.results
+            this.in_theater_loading = true
         }
     }
 })
