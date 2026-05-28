@@ -1,8 +1,8 @@
 <script setup>
+import Card from "@/components/Card.vue";
 import { computed, ref } from "vue";
 
 const currentOffset = ref(0);
-const windowSize = 3;
 const paginationFactor = 220;
 
 const items = ref([
@@ -18,7 +18,7 @@ const items = ref([
 const atEndOfList = computed(() => {
   return (
       currentOffset.value <=
-      paginationFactor * -1 * (items.value.length - windowSize)
+      paginationFactor * -1 * (items.value.length)
   );
 });
 
@@ -36,62 +36,24 @@ function moveCarousel(direction) {
 </script>
 
 <template>
-  <div class="container py-5">
+  <div class="container-fluid py-5">
 
     <div class="d-flex align-items-center justify-content-center">
       <!-- Left button -->
-      <button
-          class="btn btn-outline-success rounded-circle me-3"
-          @click="moveCarousel(-1)"
-          :disabled="atHeadOfList"
-      >
-        ‹
+      <button class="btn-primary-outline m-2" @click="moveCarousel(-1)" :disabled="atEndOfList">
+        <
       </button>
 
       <!-- Carousel -->
-      <div class="overflow-hidden col-10">
-        <div
-            class="d-flex transition"
-            :style="{ transform: `translateX(${currentOffset}px)` }"
-        >
-          <div
-              v-for="item in items"
-              :key="item.name"
-              class="card shadow-sm mx-2 flex-shrink-0"
-              style="width: 200px"
-          >
-            <img
-                src="https://placehold.co/200x200"
-                class="card-img-top"
-                alt="Restaurant"
-            />
-
-            <div class="card-body">
-              <h5 class="card-title mb-3">
-                {{ item.name }}
-              </h5>
-
-              <div class="d-flex flex-wrap gap-1">
-                <span
-                    v-for="tag in item.tag"
-                    :key="tag"
-                    class="badge text-bg-light border"
-                >
-                  {{ tag }}
-                </span>
-              </div>
-            </div>
-          </div>
+      <div class="overflow-hidden">
+        <div class="d-flex transition" :style="{ transform: `translateX(${currentOffset}px)` }">
+          <Card v-for="item in items" :data="{title: item.name, info: item.tag[0], img: 'https://image.tmdb.org/t/p/w500/1E5baAaEse26fej7uHcjOgEE2t2.jpg'}"/>
         </div>
       </div>
 
       <!-- Right button -->
-      <button
-          class="btn btn-outline-success rounded-circle ms-3"
-          @click="moveCarousel(1)"
-          :disabled="atEndOfList"
-      >
-        ›
+      <button class="btn-primary-outline m-2" @click="moveCarousel(1)" :disabled="atEndOfList">
+        >
       </button>
     </div>
   </div>
@@ -100,5 +62,11 @@ function moveCarousel(direction) {
 <style scoped>
 .transition {
   transition: transform 0.2s ease-in-out;
+}
+.btn-primary-outline {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--color-text);
+  font-size: 3rem;
 }
 </style>
