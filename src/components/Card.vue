@@ -10,7 +10,7 @@
 </script>
 
 <template>
-  <div v-if="data" class="card shadow" style="width: 13rem;">
+  <div v-if="data" class="card shadow mx-2 flex-shrink-0" style="width: 13rem;">
     <img class="card-img-top" :src="data.img" :alt="data.title">
       <div class="card-body p-1">
         <p class="m-0 fs-4">{{ data.title }}</p>
