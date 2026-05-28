@@ -1,145 +1,104 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useMovieStore } from '@/stores/movieStore'
-import {useMockMovieStore} from "@/stores/mockMovieStore.js";
+import { computed, ref } from "vue";
 
-const store = useMockMovieStore()
+const currentOffset = ref(0);
+const windowSize = 3;
+const paginationFactor = 220;
 
-//const store = useMovieStore()
-const cards = computed(() => store.movies)
+const items = ref([
+  { name: "Kin Khao", tag: ["Thai"] },
+  { name: "Jū-Ni", tag: ["Sushi", "Japanese", "$$$$"] },
+  { name: "Delfina", tag: ["Pizza", "Casual"] },
+  { name: "San Tung", tag: ["Chinese", "$$"] },
+  { name: "Anchor Oyster Bar", tag: ["Seafood", "Cioppino"] },
+  { name: "Locanda", tag: ["Italian"] },
+  { name: "Garden Creamery", tag: ["Ice cream"] },
+]);
 
+const atEndOfList = computed(() => {
+  return (
+      currentOffset.value <=
+      paginationFactor * -1 * (items.value.length - windowSize)
+  );
+});
 
-const chunkSize = ref(6)
+const atHeadOfList = computed(() => {
+  return currentOffset.value === 0;
+});
 
-const updateChunkSize = () => {
-  const width = window.innerWidth
-
-  if (width < 576) {
-    chunkSize.value = 1
-  } else if (width < 768) {
-    chunkSize.value = 2
-  } else if (width < 992) {
-    chunkSize.value = 3
-  } else if (width < 1200) {
-    chunkSize.value = 4
-  } else {
-    chunkSize.value = 6
+function moveCarousel(direction) {
+  if (direction === 1 && !atEndOfList.value) {
+    currentOffset.value -= paginationFactor;
+  } else if (direction === -1 && !atHeadOfList.value) {
+    currentOffset.value += paginationFactor;
   }
 }
-
-onMounted(async () => {
-  updateChunkSize()
-  window.addEventListener('resize', updateChunkSize)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('resize', updateChunkSize)
-})
-
-const slides = computed(() => {
-  const result = []
-  const total = cards.value.length
-
-  for (let i = 0; i < total; i++) {
-    const group = []
-
-    for (let j = 0; j < chunkSize.value; j++) {
-      const index = (i + j) % total
-      group.push(cards.value[index])
-    }
-
-    result.push(group)
-  }
-  return result
-})
 </script>
 
 <template>
-  <div class="container-fluid mt-4">
-    <div id="carousel" class="carousel slide custom-carousel">
+  <div class="container py-5">
 
-      <button class="carousel-control-prev" type="button" data-bs-target="#carousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon"></span>
+    <div class="d-flex align-items-center justify-content-center">
+      <!-- Left button -->
+      <button
+          class="btn btn-outline-success rounded-circle me-3"
+          @click="moveCarousel(-1)"
+          :disabled="atHeadOfList"
+      >
+        ‹
       </button>
 
-      <div class="carousel-inner">
-        <div v-for="(slide, index) in slides" :key="index" class="carousel-item" :class="{ active: index === 0 }">
-          <div class="row gx-3 justify-content-evenly">
-            <div v-for="card in slide" :key="card.id" class="col-auto">
+      <!-- Carousel -->
+      <div class="overflow-hidden col-10">
+        <div
+            class="d-flex transition"
+            :style="{ transform: `translateX(${currentOffset}px)` }"
+        >
+          <div
+              v-for="item in items"
+              :key="item.name"
+              class="card shadow-sm mx-2 flex-shrink-0"
+              style="width: 200px"
+          >
+            <img
+                src="https://placehold.co/200x200"
+                class="card-img-top"
+                alt="Restaurant"
+            />
 
-              <slot :card="card" />
+            <div class="card-body">
+              <h5 class="card-title mb-3">
+                {{ item.name }}
+              </h5>
 
+              <div class="d-flex flex-wrap gap-1">
+                <span
+                    v-for="tag in item.tag"
+                    :key="tag"
+                    class="badge text-bg-light border"
+                >
+                  {{ tag }}
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <button class="carousel-control-next" type="button" data-bs-target="#carousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon"></span>
+      <!-- Right button -->
+      <button
+          class="btn btn-outline-success rounded-circle ms-3"
+          @click="moveCarousel(1)"
+          :disabled="atEndOfList"
+      >
+        ›
       </button>
-
     </div>
   </div>
 </template>
 
-
 <style scoped>
-.carousel{
-  color: var(--color-text);
-}
-
-.carousel-item {
-  transition: none !important;
-}
-
-.custom-carousel {
-  border-top: 2px solid var(--color-border);
-  border-bottom: 2px solid var(--color-border);
-  padding: 20px 40px;
-  background: var(--color-background);
-}
-
-.carousel-inner {
-  overflow: hidden;
-}
-
-.card img {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-}
-
-.carousel-control-prev,
-.carousel-control-next {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 10;
-  width: 50px;
-}
-
-.carousel-control-next-icon,
-.carousel-control-prev-icon {
-  filter: invert(1);
-}
-
-@media (prefers-color-scheme: dark) {
-  .carousel-control-next-icon,
-  .carousel-control-prev-icon {
-    filter: none;
-  }
-}
-
-
-@media (max-width: 576px) {
-  .card img {
-    height: 140px;
-  }
-}
-
-@media (max-width: 992px) {
-  .card img {
-    height: 160px;
-  }
+.transition {
+  transition: transform 0.2s ease-in-out;
 }
 </style>
