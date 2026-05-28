@@ -8,6 +8,7 @@ export const useMovieStore = defineStore('movies', {
 
         trending: {},
         trending_loading: false,
+        trending_banner: "",
 
         in_theater: {},
         in_theater_loading: false
@@ -24,7 +25,7 @@ export const useMovieStore = defineStore('movies', {
                 type = "multi"
             }
 
-            this.loading = true
+            this.search_loading = true
 
             try {
                 const response = await TMDBService.searchMedia(type, query)
@@ -33,20 +34,29 @@ export const useMovieStore = defineStore('movies', {
                 console.error('Erreur TMDB:', error)
                 this.search_movies = []
             } finally {
-                this.loading = false
+                this.search_loading = false
             }
         },
         async getTrendingMedias(){
             this.trending_loading = true
+
             const response = await TMDBService.getTrendingMedias()
             this.trending = response.data.results
-            this.trending_loading = true
+
+            // get random image for the banner
+            const random_index = Math.floor(Math.random() * this.trending.length)
+            const image_base_path = "https://media.themoviedb.org/t/p/w1920_and_h600_multi_faces_filter(duotone,00192f,00baff)"
+            this.trending_banner = image_base_path+this.trending[random_index].backdrop_path
+
+            this.trending_loading = false
         },
         async getMoviesInTheatre() {
             this.in_theater_loading = true
+
             const response = await TMDBService.getMoviesInTheatre()
             this.in_theater = response.data.results
-            this.in_theater_loading = true
+
+            this.in_theater_loading = false
         }
     }
 })
