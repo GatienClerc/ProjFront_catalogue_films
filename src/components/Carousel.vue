@@ -1,19 +1,21 @@
 <script setup>
 import Card from "@/components/Card.vue";
 import { ref } from "vue";
+import { useMovieStore } from '@/stores/movieStore'
 
+const movieStore = useMovieStore()
+
+const props = defineProps({
+  source: {
+    type: String,
+    required: true,
+  },
+});
+
+const items = movieStore[props.source]
+
+// visual effect
 const cardWidth = 220;
-
-const items = ref([
-  { name: "Kin Khao", tag: ["Thai"] },
-  { name: "Jū-Ni", tag: ["Sushi", "Japanese", "$$$$"] },
-  { name: "Delfina", tag: ["Pizza", "Casual"] },
-  { name: "San Tung", tag: ["Chinese", "$$"] },
-  { name: "Anchor Oyster Bar", tag: ["Seafood", "Cioppino"] },
-  { name: "Locanda", tag: ["Italian"] },
-  { name: "Garden Creamery", tag: ["Ice cream"] },
-]);
-
 const offset = ref(0);
 const transitioning = ref(false);
 
@@ -28,12 +30,12 @@ function moveCarousel(direction) {
   setTimeout(() => {
     if (direction === 1) {
       // Move first item to end
-      const first = items.value.shift();
-      items.value.push(first);
+      const first = items.shift();
+      items.push(first);
     } else {
       // Move last item to start
       const last = items.value.pop();
-      items.value.unshift(last);
+      items.unshift(last);
     }
 
     // Reset instantly
@@ -56,7 +58,7 @@ function moveCarousel(direction) {
       </button>
 
       <!-- Carousel -->
-      <div class="carousel-window overflow-hidden" style="width: 100%;">
+      <div class="carousel-window overflow-hidden">
         <div
             class="d-flex"
             :class="{ transition: transitioning }"
@@ -68,9 +70,9 @@ function moveCarousel(direction) {
               v-for="item in items"
               :key="item.name"
               :data="{
-              title: item.name,
-              info: item.tag[0],
-              img: 'https://image.tmdb.org/t/p/w500/1E5baAaEse26fej7uHcjOgEE2t2.jpg'
+              title: item.title,
+              info: item.info,
+              img: item.img
             }"
           />
         </div>
@@ -89,10 +91,6 @@ function moveCarousel(direction) {
 </template>
 
 <style scoped>
-.carousel-window {
-  width: 900px;
-}
-
 .transition {
   transition: transform 0.3s ease-in-out;
 }
