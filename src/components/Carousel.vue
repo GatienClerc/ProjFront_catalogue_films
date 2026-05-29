@@ -15,7 +15,7 @@ const props = defineProps({
 const items = movieStore[props.source]
 
 // visual effect
-const cardWidth = 220;
+const cardWidth = 255;
 const offset = ref(0);
 const transitioning = ref(false);
 

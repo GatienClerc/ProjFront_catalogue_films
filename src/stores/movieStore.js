@@ -1,16 +1,19 @@
 import { defineStore } from 'pinia'
 import TMDBService from '@/services/TMDBService'
 
+const banner_image_path = "https://media.themoviedb.org/t/p/w1920_and_h600_multi_faces_filter(duotone,00192f,00baff)"
+const poster_image_path = "https://media.themoviedb.org/t/p/w220_and_h330_face/"
+
 export const useMovieStore = defineStore('movies', {
     state: () => ({
         search_movies: [],
         search_loading: false,
 
-        trending: {},
+        trending: [],
         trending_loading: false,
         trending_banner: "",
 
-        in_theater: {},
+        in_theater: [],
         in_theater_loading: false
     }),
 
@@ -41,12 +44,19 @@ export const useMovieStore = defineStore('movies', {
             this.trending_loading = true
 
             const response = await TMDBService.getTrendingMedias()
-            this.trending = response.data.results
+            console.log(response)
+            for (let i = 0; i < response.data.results.length; i++) {
+                const media = response.data.results[i]
+                this.trending.push({
+                    id: media.id,
+                    title: media.name || media.title,
+                    info: media.first_air_date || media.release_date,
+                    img:poster_image_path+media.poster_path})
+            }
 
             // get random image for the banner
-            const random_index = Math.floor(Math.random() * this.trending.length)
-            const image_base_path = "https://media.themoviedb.org/t/p/w1920_and_h600_multi_faces_filter(duotone,00192f,00baff)"
-            this.trending_banner = image_base_path+this.trending[random_index].backdrop_path
+            const random_index = Math.floor(Math.random() * response.data.results.length)
+            this.trending_banner = banner_image_path+response.data.results[random_index].backdrop_path
 
             this.trending_loading = false
         },
@@ -54,7 +64,15 @@ export const useMovieStore = defineStore('movies', {
             this.in_theater_loading = true
 
             const response = await TMDBService.getMoviesInTheatre()
-            this.in_theater = response.data.results
+
+            for (let i = 0; i < response.data.results.length; i++) {
+                const media = response.data.results[i]
+                this.in_theater.push({
+                    id: media.id,
+                    title: media.name || media.title,
+                    info: media.first_air_date || media.release_date,
+                    img:poster_image_path+media.poster_path})
+            }
 
             this.in_theater_loading = false
         }
