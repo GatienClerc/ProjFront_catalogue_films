@@ -3,8 +3,6 @@ import { RouterLink, RouterView } from 'vue-router'
 import { ref, watch } from 'vue'
 import { useMovieStore } from '@/stores/movieStore'
 import SearchResults from '@/components/Search.vue'
-import Carousel from '@/components/Carousel.vue'
-import Card from "@/components/Card.vue";
 
 const movieStore = useMovieStore()
 const search = ref('')
