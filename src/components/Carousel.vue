@@ -24,24 +24,41 @@ function moveCarousel(direction) {
 
   transitioning.value = true;
 
-  // Slide visually
-  offset.value = direction === 1 ? -cardWidth : cardWidth;
+  if (direction === 1) {
+    // RIGHT
+    offset.value = -cardWidth;
 
-  setTimeout(() => {
-    if (direction === 1) {
-      // Move first item to end
+    setTimeout(() => {
       const first = items.shift();
       items.push(first);
-    } else {
-      // Move last item to start
-      const last = items.value.pop();
-      items.unshift(last);
-    }
 
-    // Reset instantly
+      transitioning.value = false;
+      offset.value = 0;
+    }, 300);
+
+  } else {
+    // LEFT
+
+    // Put last item in front FIRST
+    const last = items.pop();
+    items.unshift(last);
+
+    // Jump instantly to shifted position
     transitioning.value = false;
-    offset.value = 0;
-  }, 300);
+    offset.value = -cardWidth;
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        // Animate back to center
+        transitioning.value = true;
+        offset.value = 0;
+      });
+    });
+
+    setTimeout(() => {
+      transitioning.value = false;
+    }, 300);
+  }
 }
 </script>
 
