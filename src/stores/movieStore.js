@@ -40,6 +40,10 @@ export const useMovieStore = defineStore('movies', {
                 this.search_loading = false
             }
         },
+        /**
+         * get trending medias and format them into a list and get a banner image
+         * @returns {Promise<void>}
+         */
         async getTrendingMedias(){
             this.trending_loading = true
 
@@ -59,6 +63,10 @@ export const useMovieStore = defineStore('movies', {
 
             this.trending_loading = false
         },
+        /**
+         * get movies in theater and format them into a list
+         * @returns {Promise<void>}
+         */
         async getMoviesInTheatre() {
             this.in_theater_loading = true
 
