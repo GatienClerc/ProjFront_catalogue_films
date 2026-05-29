@@ -44,11 +44,10 @@ export const useMovieStore = defineStore('movies', {
             this.trending_loading = true
 
             const response = await TMDBService.getTrendingMedias()
-            console.log(response)
             for (let i = 0; i < response.data.results.length; i++) {
                 const media = response.data.results[i]
                 this.trending.push({
-                    id: media.id,
+                    link: "/display/"+media.id,
                     title: media.name || media.title,
                     info: media.first_air_date || media.release_date,
                     img:poster_image_path+media.poster_path})
@@ -68,7 +67,7 @@ export const useMovieStore = defineStore('movies', {
             for (let i = 0; i < response.data.results.length; i++) {
                 const media = response.data.results[i]
                 this.in_theater.push({
-                    id: media.id,
+                    link: "/display/"+media.id,
                     title: media.name || media.title,
                     info: media.first_air_date || media.release_date,
                     img:poster_image_path+media.poster_path})
