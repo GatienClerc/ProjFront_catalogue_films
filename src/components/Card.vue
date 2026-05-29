@@ -4,17 +4,17 @@
   import { useMovieStore } from '@/stores/movieStore'
 
   const props = defineProps({
-    movie: Object
+    data: Object
     //movieId: Number
   })
 </script>
 
 <template>
-  <div v-if="movie" class="card shadow" style="width: 13rem;">
-    <img class="card-img-top" :src="movie.img" :alt="afflass">
+  <div v-if="data" class="card shadow mx-2 flex-shrink-0" style="width: 13rem;">
+    <img class="card-img-top" :src="data.img" :alt="data.title">
       <div class="card-body p-1">
-        <p class="m-0 fs-4">{{ movie.title }}</p>
-        <p class="m-0">{{ movie.info }}</p>
+        <p class="m-0 fs-4">{{ data.title }}</p>
+        <p class="m-0">{{ data.info }}</p>
       </div>
   </div>
 </template>
