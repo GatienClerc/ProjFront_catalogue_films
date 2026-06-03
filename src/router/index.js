@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import AccountView from '../views/AccountView.vue'
-import MoviesView from '../views/MoviesView.vue'
+import MediasView from '../views/MediasView.vue'
 import DisplayView from '../views/DisplayView.vue'
 
 const router = createRouter({
@@ -20,7 +20,7 @@ const router = createRouter({
     {
       path: '/movies',
       name: 'movies',
-      component: MoviesView,
+      component: MediasView,
     },
     {
       path: '/display/:id',
