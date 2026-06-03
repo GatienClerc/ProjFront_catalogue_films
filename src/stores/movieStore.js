@@ -7,14 +7,18 @@ const poster_image_path = "https://media.themoviedb.org/t/p/w220_and_h330_face/"
 export const useMovieStore = defineStore('movies', {
     state: () => ({
         search_movies: [],
-        search_loading: false,
+        search_loading: true,
 
         trending: [],
-        trending_loading: false,
+        trending_loading: true,
         trending_banner: "",
 
         in_theater: [],
-        in_theater_loading: false
+        in_theater_loading: true,
+
+        media: {},
+        credit: {},
+        media_loading: true
     }),
 
     actions: {
@@ -82,6 +86,20 @@ export const useMovieStore = defineStore('movies', {
             }
 
             this.in_theater_loading = false
+        },
+        async getMediaById(id){
+            this.media_loading = true
+            {
+                const response = await TMDBService.getMediaDetails("multi", id)
+                this.media = response.data
+                console.log(this.media)
+            }
+            {
+                const response = await TMDBService.getMediaCredits("multi", id)
+                this.credit = response.data
+                console.log(this.credit)
+            }
+            this.media_loading = false
         }
     }
 })
