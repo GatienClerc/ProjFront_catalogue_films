@@ -17,7 +17,8 @@ export const useMovieStore = defineStore('movies', {
         in_theater_loading: true,
 
         media: {},
-        credit: {},
+        director: {},
+        actors: [],
         media_loading: true
     }),
 
@@ -55,7 +56,11 @@ export const useMovieStore = defineStore('movies', {
             for (let i = 0; i < response.data.results.length; i++) {
                 const media = response.data.results[i]
                 this.trending.push({
-                    link: "/display/"+media.id,
+                    link: {
+                        name: 'display',
+                        params: { id: media.id },
+                        query: { type: media.media_type, title: media.name || media.title }
+                    },
                     title: media.name || media.title,
                     info: media.first_air_date || media.release_date,
                     img:poster_image_path+media.poster_path})
@@ -79,7 +84,11 @@ export const useMovieStore = defineStore('movies', {
             for (let i = 0; i < response.data.results.length; i++) {
                 const media = response.data.results[i]
                 this.in_theater.push({
-                    link: "/display/"+media.id,
+                    link: {
+                        name: 'display',
+                        params: { id: media.id },
+                        query: { type: "movie", title: media.name || media.title }
+                    },
                     title: media.name || media.title,
                     info: media.first_air_date || media.release_date,
                     img:poster_image_path+media.poster_path})
@@ -87,17 +96,26 @@ export const useMovieStore = defineStore('movies', {
 
             this.in_theater_loading = false
         },
-        async getMediaById(id){
+        async getMediaById(id, type){
+            let response
             this.media_loading = true
             {
-                const response = await TMDBService.getMediaDetails("multi", id)
+                const response = await TMDBService.getMediaDetails(type, id)
                 this.media = response.data
                 console.log(this.media)
             }
             {
-                const response = await TMDBService.getMediaCredits("multi", id)
-                this.credit = response.data
-                console.log(this.credit)
+                const response = await TMDBService.getMediaCredits(type, id)
+                this.director = response.data.crew[0]
+                for (let i = 0; i < response.data.cast.length; i++) {
+                    const actor = response.data.cast[i]
+                    this.actors.push({
+                        link: "",
+                        title: actor.name,
+                        info: actor.character,
+                        img:"https://media.themoviedb.org/t/p/w138_and_h175_face/"+actor.profile_path
+                        })
+                }
             }
             this.media_loading = false
         }

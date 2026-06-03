@@ -11,7 +11,7 @@ let favorite = false
 const movieStore = useMovieStore()
 
 onMounted(() => {
-  movieStore.getMediaById(route.params.id)
+  movieStore.getMediaById(route.params.id, route.query.type)
 })
 </script>
 
@@ -26,8 +26,8 @@ onMounted(() => {
       <!-- Movie Info -->
       <div class="col-12 col-md-8">
         <div class="d-flex flex-wrap align-items-end mb-3">
-          <h1 class="mb-0">{{movieStore.media.title}}</h1>
-          <h2 class="ms-4 mb-0">{{movieStore.media.release_date}}</h2>
+          <h1 class="mb-0">{{movieStore.media.title || route.query.title}}</h1>
+          <h2 class="ms-4 mb-0">{{movieStore.media.release_date || movieStore.media.air_date}}</h2>
         </div>
         <div class="genres">
           <h2 v-for="genre in movieStore.media.genres" :key="genre.id">
@@ -62,15 +62,16 @@ onMounted(() => {
 
         <div class="row mt-4">
           <div>
-            <p class="fw-bold mb-0">{{movieStore.credit.crew[0].name}}</p>
-            <p>{{movieStore.credit.crew[0].job}}</p>
+            <p class="fw-bold mb-0">{{movieStore.director.name}}</p>
+            <p>{{movieStore.director.job}}</p>
           </div>
         </div>
       </div>
     </div>
     <h1>Acteurs</h1>
-    <Carousel source=""></Carousel>
+    <Carousel source="actors"></Carousel>
     <h1>Episodes</h1>
+    <Carousel source=""></Carousel>
   </main>
 </template>
 
