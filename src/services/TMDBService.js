@@ -4,8 +4,8 @@
  * Author :                 Thierry Perroud
  * Creation date :          06.05.2026
  * Modified by :            Thierry Perroud
- * Modification date :      22.05.2026
- * Version :                0.4
+ * Modification date :      03.06.2026
+ * Version :                0.6
  **********************************************************************************************************************/
 /***********************************************************************************************************************
  * Imports
@@ -48,7 +48,7 @@ export default {
      * @returns JSON
      */
     getGenres(type = "movie") {
-        if (type !== "movie" || type !== "tv") type = "movie"   // Defaults to movies
+        if (type !== "movie" && type !== "tv") type = "movie"   // Defaults to movies
 
         return apiClient.get(`/genre/${type}/list?language=fr`)
     },
@@ -66,7 +66,7 @@ export default {
      */
     searchMedia(type = "movie", query, page = 1) {
         if (!query) return JSON.parse('{"error": "A query is mandatory."}')
-        if (type !== "movie" || type !== "tv" || type !== "multi") type = "movie"   // Defaults to movies
+        if (type !== "movie" && type !== "tv" && type !== "multi") type = "movie"   // Defaults to movies
         if (!page || page < 1) page = 1                                             // Defaults to page 1
 
         return apiClient.get(`/search/${type}?query=${query}&language=fr&page=${page}`)
@@ -83,7 +83,7 @@ export default {
      * @returns JSON
      */
     filterMedia(type = "movie", filters, page = 1) {
-        if (type !== "movie" || type !== "tv") type = "movie"   // Defaults to movies
+        if (type !== "movie" && type !== "tv") type = "movie"   // Defaults to movies
         if (!page || page < 1) page = 1                         // Defaults to page 1
         let url = `/discover/${type}?language=fr&page=${page}`
 
@@ -104,7 +104,7 @@ export default {
      */
     getMediaCredits(type = "movie", mediaId) {
         if (mediaId === null || mediaId < 0) return JSON.parse('{"error": "Invalid media ID."}')
-        if (type !== "movie" || type !== "tv") type = "movie"   // Defaults to movies
+        if (type !== "movie" && type !== "tv") type = "movie"   // Defaults to movies
 
         return apiClient.get(`/${type}/${mediaId}/credits`)
     },
@@ -121,7 +121,7 @@ export default {
      */
     getMediaDetails(type = "movie", mediaId, season = 1) {
         if (mediaId === null || mediaId < 0) return JSON.parse('{"error": "Invalid media ID"}')
-        if (type !== "movie" || type !== "tv") type = "movie"   // Defaults to movies
+        if (type !== "movie" && type !== "tv") type = "movie"   // Defaults to movies
         let url = `/${type}/${mediaId}`
 
         if (type === "tv") {
