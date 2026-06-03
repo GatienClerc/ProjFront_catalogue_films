@@ -27,7 +27,7 @@ onBeforeUnmount(() => {
 })
 
 // rouvrir quand nouveaux résultats
-watch(() => movieStore.movies, (newVal) => {
+watch(() => movieStore.search_movies, (newVal) => {
   if (newVal.length > 0) {
     isOpen.value = true
   }
@@ -36,14 +36,14 @@ watch(() => movieStore.movies, (newVal) => {
 
 <template>
   <div
-      v-if="movieStore.movies.length > 0 && isOpen"
+      v-if="movieStore.search_movies.length > 0 && isOpen"
       ref="searchRef"
       class="position-absolute start-0 w-100 shadow z-2 search"
   >
     <div class="container">
       <ul class="list-group list-group-flush">
         <li
-            v-for="film in movieStore.movies"
+            v-for="film in movieStore.search_movies"
             :key="film.id"
             class="result list-group-item list-group-item-action search-item"
         >

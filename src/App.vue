@@ -52,11 +52,13 @@ watch(search, (newValue) => {
 header {
   background-color: var(--color-background-soft);
 }
+
 .input-group-text, .form-control, .form-control:focus {
   background-color: var(--color-background-soft);
   border: 1px solid var(--color-border);
   color: var(--color-text);
 }
+
 .form-control::placeholder {
   color: var(--color-text);
 }
