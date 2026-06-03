@@ -71,7 +71,7 @@ onMounted(() => {
     <h1 class="m-5 mb-1">Acteurs</h1>
     <Carousel source="actors"></Carousel>
     <h1 class="m-5 mb-1" v-if="route.query.type==='tv'">Episodes</h1>
-    <Carousel source="" v-if="route.query.type==='tv'"></Carousel>
+    <Carousel source="episodes" v-if="route.query.type==='tv'"></Carousel>
   </main>
 </template>
 

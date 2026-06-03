@@ -19,6 +19,7 @@ export const useMovieStore = defineStore('movies', {
         media: {},
         director: {},
         actors: [],
+        episodes: [],
         media_loading: true
     }),
 
@@ -104,6 +105,18 @@ export const useMovieStore = defineStore('movies', {
                 const response = await TMDBService.getMediaDetails(type, id)
                 this.media = response.data
                 console.log(this.media)
+                if (type === "tv") {
+                    this.episodes = []
+                    for (let i = 0; i < response.data.episodes.length; i++) {
+                        const episode = response.data.episodes[i]
+                        this.episodes.push({
+                            link: "",
+                            title: episode.episode_number+". "+episode.name,
+                            info: episode.air_date,
+                            img:"https://media.themoviedb.org/t/p/w227_and_h127_face/"+episode.still_path
+                        })
+                    }
+                }
             }
             {
                 const response = await TMDBService.getMediaCredits(type, id)
