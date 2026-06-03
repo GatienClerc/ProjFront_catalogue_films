@@ -16,8 +16,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="container py-3" v-if="!movieStore.media_loading">
-    <div class="row g-4">
+  <main class="container-fluid py-3 px-5" v-if="!movieStore.media_loading">
+    <div class="row g-4 px-5">
       <!-- Poster -->
       <div class="col-12 col-md-4">
         <img
@@ -68,10 +68,10 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <h1>Acteurs</h1>
+    <h1 class="m-5 mb-1">Acteurs</h1>
     <Carousel source="actors"></Carousel>
-    <h1>Episodes</h1>
-    <Carousel source=""></Carousel>
+    <h1 class="m-5 mb-1" v-if="route.query.type==='tv'">Episodes</h1>
+    <Carousel source="" v-if="route.query.type==='tv'"></Carousel>
   </main>
 </template>
 
