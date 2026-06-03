@@ -166,5 +166,50 @@ export default {
      */
     getShowsAiringToday() {
         return apiClient.get(`/tv/airing_today`)
+    },
+
+    /**
+     * Returns the TMDB account details
+     * Route documentations: https://developer.themoviedb.org/reference/account-details
+     *                       https://developer.themoviedb.org/docs/authentication-application (for bearer token only auth)
+     *
+     * @returns JSON
+     */
+    getAccountDetails() {
+      return apiClient.get(`/account`)
+    },
+
+    /**
+     * Adds/removes a movie or TV serie from favorites
+     * Route documentation : https://developer.themoviedb.org/reference/account-add-favorite
+     *
+     * @param accountId Integer representing the ID of the account (must be 0 or more)
+     * @param type Enum("movie", "tv")
+     * @param mediaId Integer representing the ID of the movie or TV show (must be 0 or more)
+     * @param choice Boolean
+     * @returns JSON
+     */
+    manageFavorites(accountId, type = "movie", mediaId, choice = true) {
+        return apiClient.post(
+            `/account/${accountId}/favorite`,
+            {
+                media_type: type,
+                mediaId: mediaId,
+                favorite: choice
+            }
+        )
+    },
+
+    /**
+     * Returns the list of favorited movies or TV shows
+     * Route documentations: https://developer.themoviedb.org/reference/account-get-favorites
+     *                       https://developer.themoviedb.org/reference/account-favorite-tv
+     *
+     * @param accountId Integer representing the ID of the account (must be 0 or more)
+     * @param type Enum("movies", "tv")
+     * @returns {Promise<axios.AxiosResponse<any>>}
+     */
+    getFavoriteMedia(accountId, type = "movies") {
+        return apiClient.get(`/account/${accountId}/favorite/${type}`)
     }
 }
