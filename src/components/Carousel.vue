@@ -15,7 +15,7 @@ const props = defineProps({
 const items = movieStore[props.source]
 
 // visual effect
-const cardWidth = 220;
+const cardWidth = 255;
 const offset = ref(0);
 const transitioning = ref(false);
 
@@ -87,9 +87,10 @@ function moveCarousel(direction) {
               v-for="item in items"
               :key="item.name"
               :data="{
-              title: item.title,
-              info: item.info,
-              img: item.img
+                link: item.link,
+                title: item.title,
+                info: item.info,
+                img: item.img
             }"
           />
         </div>
