@@ -15,7 +15,3 @@
       </div>
   </RouterLink>
 </template>
-
-<style scoped>
-
-</style>
