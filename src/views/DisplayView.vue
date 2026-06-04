@@ -2,7 +2,7 @@
 import { useRoute } from 'vue-router'
 import Carousel from '@/components/Carousel.vue'
 import { useMovieStore } from '@/stores/movieStore'
-import { onMounted } from 'vue'
+import { watch } from 'vue'
 
 const route = useRoute()
 const poster_image_path = 'https://image.tmdb.org/t/p/w500'
@@ -10,9 +10,13 @@ let favorite = false
 
 const movieStore = useMovieStore()
 
-onMounted(() => {
-  movieStore.getMediaById(route.params.id, route.query.type)
-})
+watch(
+    () => [route.params.id, route.query.type],
+    ([id, type]) => {
+      movieStore.getMediaById(id, type)
+    },
+    { immediate: true }
+)
 </script>
 
 <template>
@@ -54,14 +58,14 @@ onMounted(() => {
 
         <p>{{movieStore.media.tagline}}</p>
 
-        <h3>Synopsis</h3>
+        <h3 v-if="movieStore.media.overview">Synopsis</h3>
 
         <p>
           {{movieStore.media.overview}}
         </p>
 
         <div class="row mt-4">
-          <div>
+          <div v-if="movieStore.director">
             <p class="fw-bold mb-0">{{movieStore.director.name}}</p>
             <p>{{movieStore.director.job}}</p>
           </div>

@@ -99,8 +99,8 @@ export const useMovieStore = defineStore('movies', {
             this.in_theater_loading = false
         },
         async getMediaById(id, type){
-            let response
             this.media_loading = true
+            this.media = {}
             {
                 const response = await TMDBService.getMediaDetails(type, id)
                 this.media = response.data

@@ -42,13 +42,18 @@ watch(() => movieStore.search_movies, (newVal) => {
   >
     <div class="container">
       <ul class="list-group list-group-flush">
-        <li
+        <RouterLink
             v-for="film in movieStore.search_movies"
             :key="film.id"
             class="result list-group-item list-group-item-action search-item"
+            :to="{
+                  name: 'display',
+                  params: { id: film.id },
+                  query: { type: film.media_type, title: film.name || film.title }
+                  }"
         >
-          {{ film.title || film.name }}
-        </li>
+          {{ film.title || film.name}}
+        </RouterLink>
       </ul>
     </div>
   </div>
