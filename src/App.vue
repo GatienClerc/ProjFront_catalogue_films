@@ -36,8 +36,8 @@ watch(search, (newValue) => {
         </div>
       </div>
     </div>
+    <SearchResults></SearchResults>
   </header>
-  <SearchResults></SearchResults>
   <div id="app" class="d-flex flex-column min-vh-100">
     <div class="flex-grow-1">
       <RouterView/>
