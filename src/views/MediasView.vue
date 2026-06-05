@@ -29,7 +29,7 @@ function toggleGenre(id) {
 <template>
   <div class="filter container-fluid">
     <div class="row">
-      <div class="col-1">
+      <div class="col-1 col-xxl-1">
 
         <fieldset style="border: none;">
           <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -46,17 +46,39 @@ function toggleGenre(id) {
 
         </fieldset>
       </div>
-
-      <div class="col-3">
-        <button v-for="genre in store.genres" :key="genre.id" :class="{ active: selected_genres.includes(genre.id) }" class="m-1" @click="toggleGenre(genre.id)">
-          {{ genre.name }}
-        </button>
+      <div class="col-10 col-xxl-4">
+        <div class="d-flex flex-wrap gap-1">
+          <button
+              v-for="genre in store.genres"
+              :key="genre.id"
+              :class="{ active: selected_genres.includes(genre.id) }"
+              class="m-1"
+              @click="toggleGenre(genre.id)"
+          >
+            {{ genre.name }}
+          </button>
+        </div>
       </div>
 
+      <div class="col-6 col-xxl-2 p-3 align-self-center">
+        <label class="title">Durée</label>
+        <Slider :min="0" :max="400" :step="10" :tooltips="true" v-model="store.duration"/>
+        <div class="subtitle">
+          entre {{ store.duration[0] }} / {{ store.duration[1] }} min
+        </div>
+      </div>
 
-      <div class="col-2">
+      <div class="col-6 col-xxl-2 vue-slide p-3 align-self-center">
+        <label class="title">Note</label>
+        <Slider :min="0" :max="10" :step="1" :tooltips="true" v-model="store.note"/>
+        <div class="subtitle">
+          entre {{ store.note[0] }} / {{ store.note[1] }}
+        </div>
+      </div>
 
-        <input type="date" id="date" name="trip-end" min="1900-01-01" v-model="store.date" />
+      <div class="col-6 col-xxl-1 align-self-center">
+
+        <input type="date" id="date" name="trip-end" min="1900-01-01" v-model="store.date"/>
 
         <fieldset style="border: none; padding: 0; margin-top: 10px;">
           <div style="display: flex; gap: 15px; align-items: center;">
@@ -75,27 +97,10 @@ function toggleGenre(id) {
         </fieldset>
       </div>
 
-      <div class="col-3">
-        <label class="title">Durée</label>
-        <Slider :min="0" :max="400" :step="10" :tooltips="false" v-model="store.duration"/>
-        <div class="subtitle">
-          entre {{ store.duration[0] }} / {{ store.duration[1] }} min
-        </div>
-      </div>
-
-      <div class="col-2 vue-slide">
-        <label class="title">Note</label>
-        <Slider :min="0" :max="10" :step="1" :tooltips="false" v-model="store.note"/>
-        <div class="subtitle">
-          entre {{ store.note[0] }} / {{ store.note[1] }}
-        </div>
-      </div>
-
-
-      <div class="col-1">
+      <div class="col-6 col-xxl-2 align-self-center">
         <div class="form-check adult">
           <input class="form-check-input" v-model="store.checkAdult" type="checkbox" id="checkAdult">
-          <label class="form-check-label">Afficher les films pour adulte</label>
+          <label class="form-check-label m-1">Afficher les films pour adulte</label>
         </div>
       </div>
     </div>
