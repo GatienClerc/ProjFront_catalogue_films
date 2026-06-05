@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, set } from 'vue'
+import { ref, watch } from 'vue'
 import Slider from '@vueform/slider'
 import { onMounted } from 'vue'
 import { useMovieStore } from '@/stores/movieStore'
@@ -10,18 +10,18 @@ onMounted(() => {
   store.fetchGenres()
 })
 
-let selected_genres = set
+const selected_genres = ref([])
 
-toggleGenre(id) {
-  const next = new Set(this.selected_genres)
+function toggleGenre(id) {
+  const list = selected_genres.value
 
-  if (next.has(id)) {
-    next.delete(id)
+  const index = list.indexOf(id)
+
+  if (index === -1) {
+    list.push(id)
   } else {
-    next.add(id)
+    list.splice(index, 1)
   }
-
-  this.selected_genres = next
 }
 
 </script>
