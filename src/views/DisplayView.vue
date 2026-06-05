@@ -47,12 +47,12 @@ watch(
             <i v-if="favorite === false" class="bi bi-heart fs-1"></i>
             <i v-else class="bi bi-heart-fill fs-1"></i>
           </button>
-          <button
+          <a v-if="movieStore.trailer_link" :href="movieStore.trailer_link"
               class="rounded-pill border d-flex align-items-center justify-content-center px-3"
           >
             <i class="bi bi-play-fill fs-1 me-2"></i>
             <h5 class="mb-0">Bande d'annonce</h5>
-          </button>
+          </a>
 
         </div>
 

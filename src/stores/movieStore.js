@@ -17,6 +17,7 @@ export const useMovieStore = defineStore('movies', {
         in_theater_loading: true,
 
         media: {},
+        trailer_link: "",
         director: {},
         actors: [],
         episodes: [],
@@ -106,11 +107,15 @@ export const useMovieStore = defineStore('movies', {
          */
         async getMediaById(id, type){
             this.media_loading = true
+
             this.media = {}
+            this.trailer_link = ""
+            this.actors = []
+            this.director = {}
+            // details
             {
                 const response = await TMDBService.getMediaDetails(type, id)
                 this.media = response.data
-                console.log(this.media)
                 if (type === "tv") {
                     this.episodes = []
                     for (let i = 0; i < response.data.episodes.length; i++) {
@@ -124,10 +129,21 @@ export const useMovieStore = defineStore('movies', {
                     }
                 }
             }
+            // trailer
+            {
+                const response = await TMDBService.getVideos(type, id)
+                for (let i = 0; i < response.data.results.length; i++) {
+                    const video = response.data.results[i]
+                    if (video.type === "Trailer") {
+                        this.trailer_link = "https://www.youtube.com/watch?v="+video.key
+                        break
+                    }
+                }
+            }
+            // credit
             {
                 const response = await TMDBService.getMediaCredits(type, id)
                 this.director = response.data.crew[0]
-                this.actors = []
                 for (let i = 0; i < response.data.cast.length; i++) {
                     const actor = response.data.cast[i]
                     this.actors.push({

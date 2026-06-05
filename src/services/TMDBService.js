@@ -211,5 +211,21 @@ export default {
      */
     getFavoriteMedia(accountId, type = "movies") {
         return apiClient.get(`/account/${accountId}/favorite/${type}`)
+    },
+    /**
+     * return the videos linked to the media
+     * Route documentations: https://developer.themoviedb.org/reference/tv-series-videos
+     *                       https://developer.themoviedb.org/reference/movie-videos
+     *
+     * @param type Enum("movie", "tv")
+     * @param mediaId Integer representing the ID of the movie or TV show (must be 0 or more)
+     * @returns {Promise<axios.AxiosResponse<any>>|any}
+     */
+    getVideos(type = "movie", mediaId) {
+        if (mediaId === null || mediaId < 0) return JSON.parse('{"error": "Invalid media ID."}')
+        if (type !== "movie" && type !== "tv") type = "movie"   // Defaults to movies
+
+        return apiClient.get(`/${type}/${mediaId}/videos`)
     }
+
 }
