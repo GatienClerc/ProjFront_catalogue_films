@@ -7,14 +7,21 @@ const poster_image_path = "https://media.themoviedb.org/t/p/w220_and_h330_face/"
 export const useMovieStore = defineStore('movies', {
     state: () => ({
         search_movies: [],
-        search_loading: false,
+        search_loading: true,
 
         trending: [],
-        trending_loading: false,
+        trending_loading: true,
         trending_banner: "",
 
         in_theater: [],
-        in_theater_loading: false
+        in_theater_loading: true,
+
+        media: {},
+        trailer_link: "",
+        director: {},
+        actors: [],
+        episodes: [],
+        media_loading: true
     }),
 
     actions: {
@@ -41,17 +48,22 @@ export const useMovieStore = defineStore('movies', {
             }
         },
         /**
-         * get trending medias and format them into a list and get a banner image
+         * getTrendingMedias get trending medias and format them into a list and get a banner image
          * @returns {Promise<void>}
          */
         async getTrendingMedias(){
             this.trending_loading = true
 
             const response = await TMDBService.getTrendingMedias()
+            this.trending = []
             for (let i = 0; i < response.data.results.length; i++) {
                 const media = response.data.results[i]
                 this.trending.push({
-                    link: "/display/"+media.id,
+                    link: {
+                        name: 'display',
+                        params: { id: media.id },
+                        query: { type: media.media_type, title: media.name || media.title }
+                    },
                     title: media.name || media.title,
                     info: media.first_air_date || media.release_date,
                     img:poster_image_path+media.poster_path})
@@ -64,24 +76,85 @@ export const useMovieStore = defineStore('movies', {
             this.trending_loading = false
         },
         /**
-         * get movies in theater and format them into a list
+         * getMoviesInTheatre get movies in theater and format them into a list
          * @returns {Promise<void>}
          */
         async getMoviesInTheatre() {
             this.in_theater_loading = true
 
             const response = await TMDBService.getMoviesInTheatre()
-
+            this.in_theater = []
             for (let i = 0; i < response.data.results.length; i++) {
                 const media = response.data.results[i]
                 this.in_theater.push({
-                    link: "/display/"+media.id,
+                    link: {
+                        name: 'display',
+                        params: { id: media.id },
+                        query: { type: "movie", title: media.name || media.title }
+                    },
                     title: media.name || media.title,
                     info: media.first_air_date || media.release_date,
                     img:poster_image_path+media.poster_path})
             }
 
             this.in_theater_loading = false
+        },
+        /**
+         * getMediaById get a media by it's id
+         * @param id the id of the media
+         * @param type the type of the media (film or tv)
+         * @returns {Promise<void>}
+         */
+        async getMediaById(id, type){
+            this.media_loading = true
+
+            this.media = {}
+            this.trailer_link = ""
+            this.actors = []
+            this.director = {}
+            // details
+            {
+                const response = await TMDBService.getMediaDetails(type, id)
+                this.media = response.data
+                if (type === "tv") {
+                    this.episodes = []
+                    for (let i = 0; i < response.data.episodes.length; i++) {
+                        const episode = response.data.episodes[i]
+                        this.episodes.push({
+                            link: "",
+                            title: episode.episode_number+". "+episode.name,
+                            info: episode.air_date,
+                            img:"https://media.themoviedb.org/t/p/w227_and_h127_face/"+episode.still_path
+                        })
+                    }
+                }
+            }
+            // trailer
+            {
+                const response = await TMDBService.getVideos(type, id)
+                for (let i = 0; i < response.data.results.length; i++) {
+                    const video = response.data.results[i]
+                    if (video.type === "Trailer") {
+                        this.trailer_link = "https://www.youtube.com/watch?v="+video.key
+                        break
+                    }
+                }
+            }
+            // credit
+            {
+                const response = await TMDBService.getMediaCredits(type, id)
+                this.director = response.data.crew[0]
+                for (let i = 0; i < response.data.cast.length; i++) {
+                    const actor = response.data.cast[i]
+                    this.actors.push({
+                        link: "",
+                        title: actor.name,
+                        info: actor.character,
+                        img:"https://media.themoviedb.org/t/p/w138_and_h175_face/"+actor.profile_path
+                        })
+                }
+            }
+            this.media_loading = false
         }
     }
 })
