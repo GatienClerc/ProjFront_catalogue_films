@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, set } from 'vue'
 import Slider from '@vueform/slider'
 import { onMounted } from 'vue'
 import { useMovieStore } from '@/stores/movieStore'
@@ -9,6 +9,20 @@ const store = useMovieStore()
 onMounted(() => {
   store.fetchGenres()
 })
+
+let selected_genres = set
+
+toggleGenre(id) {
+  const next = new Set(this.selected_genres)
+
+  if (next.has(id)) {
+    next.delete(id)
+  } else {
+    next.add(id)
+  }
+
+  this.selected_genres = next
+}
 
 </script>
 
@@ -34,7 +48,7 @@ onMounted(() => {
       </div>
 
       <div class="col-3">
-        <button v-for="genre in store.genres" :key="genre.id">
+        <button v-for="genre in store.genres" :key="genre.id" :class="{ active: selected_genres.includes(genre.id) }" class="m-1" @click="toggleGenre(genre.id)">
           {{ genre.name }}
         </button>
       </div>
@@ -131,5 +145,15 @@ onMounted(() => {
 
 .form-check-input {
   cursor: pointer;
+}
+button {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  border-radius: 25px;
+  border: 3px solid var(--color-background-mute);
+}
+button.active {
+  background-color: var(--color-background-mute);
+  color: var(--color-text);
 }
 </style>
