@@ -1,70 +1,32 @@
 <script setup>
 import { ref, watch } from 'vue'
+import Slider from '@vueform/slider'
+import { onMounted } from 'vue'
 import { useMovieStore } from '@/stores/movieStore'
 
 const store = useMovieStore()
-const isMovie = ref(true)
-const isSeries = ref(false)
-const duration = ref([0, 200])
-const note = ref([0, 10])
-const date = ref(null)
-const dateFilter = ref('before')
-const selectedGenres = ref([])
 
-watch([isMovie, isSeries], () => {
-  if (isMovie.value) {
-    store.getGenres('movie')
-  } else if (isSeries.value) {
-    store.getGenres('tv')
-  }
-})
-
-watch([duration, note, date, dateFilter, selectedGenres], () => {
-  applyFilters()
-})
-
-const applyFilters = () => {
-  let filters = []
-
-  filters.push({ name: 'vote_average.gte', value: note.value[0] })
-  filters.push({ name: 'vote_average.lte', value: note.value[1] })
-
-  if (store.currentType === 'movie') {
-    filters.push({ name: 'with_runtime.gte', value: duration.value[0] })
-    filters.push({ name: 'with_runtime.lte', value: duration.value[1] })
-  }
-
-  if (date.value) {
-    if (dateFilter.value === 'before') {
-      filters.push({ name: 'primary_release_date.lte', value: date.value })
-    } else {
-      filters.push({ name: 'primary_release_date.gte', value: date.value })
-    }
-  }
-
-  if (selectedGenres.value.length > 0) {
-    filters.push({
-      name: 'with_genres',
-      value: selectedGenres.value.join(',')
-    })
-  }
-
-  store.filterMedia(filters)
-}
 </script>
 
 <template>
   <div class="filter container-fluid">
     <div class="row">
       <div class="col-1">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" v-model="isMovie" id="checkMovie">
-          <label class="form-check-label">Film</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" v-model="isSeries" id="checkSeries">
-          <label class="form-check-label">Series</label>
-        </div>
+
+        <fieldset style="border: none;">
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label>
+              <input type="radio" name="type" value="film" v-model="store.type" checked/>
+              Films
+            </label>
+
+            <label>
+              <input type="radio" name="type" value="series" v-model="store.type" />
+              Series
+            </label>
+          </div>
+
+        </fieldset>
       </div>
 
       <div class="col-3">
@@ -73,18 +35,18 @@ const applyFilters = () => {
 
       <div class="col-2">
 
-        <input type="date" id="date" name="trip-end" min="1900-01-01" />
+        <input type="date" id="date" name="trip-end" min="1900-01-01" v-model="store.date" />
 
         <fieldset style="border: none; padding: 0; margin-top: 10px;">
           <div style="display: flex; gap: 15px; align-items: center;">
 
             <label style="display: flex; align-items: center; gap: 5px;">
-              <input type="radio" name="gte-lte" value="before" checked />
+              <input type="radio" name="gte_lte" value="before" v-model="store.gte_lte" checked />
               avant
             </label>
 
             <label style="display: flex; align-items: center; gap: 5px;">
-              <input type="radio" name="gte-lte" value="after" />
+              <input type="radio" name="gte_lte" value="after" v-model="store.gte_lte"/>
               apres
             </label>
 
@@ -94,25 +56,25 @@ const applyFilters = () => {
 
       <div class="col-3">
         <label class="title">Durée</label>
-        <Slider v-model="duration" :min="0" :max="400" :step="10" :tooltips="false"/>
+        <Slider :min="0" :max="400" :step="10" :tooltips="false" v-model="store.duration"/>
         <div class="subtitle">
-          entre {{ duration[0] }} / {{ duration[1] }} min
+          entre {{ store.duration[0] }} / {{ store.duration[1] }} min
         </div>
       </div>
 
       <div class="col-2 vue-slide">
         <label class="title">Note</label>
-        <Slider v-model="note" :min="0" :max="10" :step="1" :tooltips="false"/>
+        <Slider :min="0" :max="10" :step="1" :tooltips="false" v-model="store.note"/>
         <div class="subtitle">
-          entre {{ note[0] }} / {{ note[1] }}
+          entre {{ store.note[0] }} / {{ store.note[1] }}
         </div>
       </div>
 
 
       <div class="col-1">
         <div class="form-check adult">
-          <input class="form-check-input" type="checkbox" id="checkAdult">
-          <label class="form-check-label">Afficher film pour adulte</label>
+          <input class="form-check-input" v-model="store.checkAdult" type="checkbox" id="checkAdult">
+          <label class="form-check-label">Afficher les films pour adulte</label>
         </div>
       </div>
     </div>

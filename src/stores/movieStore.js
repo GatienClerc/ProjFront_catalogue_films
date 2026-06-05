@@ -16,10 +16,12 @@ export const useMovieStore = defineStore('movies', {
         in_theater: [],
         in_theater_loading: false,
 
-        filtered: [],
-        filtered_loading: false,
-        genres: [],
-        currentType: 'movie'
+        type: "",
+        date: "",
+        gte_lte: "",
+        duration: [0,400],
+        note: [0,10],
+        checkAdult: false,
     }),
 
     actions: {
@@ -87,39 +89,6 @@ export const useMovieStore = defineStore('movies', {
             }
 
             this.in_theater_loading = false
-        },
-
-        /**
-         * get movies genre
-         * @returns {Promise<void>}
-         */
-        async getGenres(type) {
-            try {
-                const response = await TMDBService.getGenres(type)
-                this.genres = response.data.genres
-                this.currentType = type
-            } catch (error) {
-                console.error(error)
-                this.genres = []
-            }
-        },
-
-        /**
-         * get movies genre
-         * @returns {Promise<void>}
-         */
-        async filterMedia(filters) {
-            this.filtered_loading = true
-
-            try {
-                const response = await TMDBService.filterMedia(this.currentType, filters)
-                this.filtered = response.data.results
-            } catch (error) {
-                console.error(error)
-                this.filtered = []
-            } finally {
-                this.filtered_loading = false
-            }
         }
     }
 })
