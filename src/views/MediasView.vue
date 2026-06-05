@@ -6,6 +6,10 @@ import { useMovieStore } from '@/stores/movieStore'
 
 const store = useMovieStore()
 
+onMounted(() => {
+  store.fetchGenres()
+})
+
 </script>
 
 <template>
@@ -30,8 +34,11 @@ const store = useMovieStore()
       </div>
 
       <div class="col-3">
-        <p>catégorie</p>
+        <button v-for="genre in store.genres" :key="genre.id">
+          {{ genre.name }}
+        </button>
       </div>
+
 
       <div class="col-2">
 

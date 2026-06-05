@@ -17,6 +17,7 @@ export const useMovieStore = defineStore('movies', {
         in_theater_loading: false,
 
         type: "",
+        genres: [],
         date: "",
         gte_lte: "",
         duration: [0,400],
@@ -89,6 +90,16 @@ export const useMovieStore = defineStore('movies', {
             }
 
             this.in_theater_loading = false
+        },
+
+        async fetchGenres() {
+            try {
+                const res = await TMDBService.getGenres(this.type)
+                this.genres = res.data.genres
+            } catch (error) {
+                console.error(error)
+            }
         }
+
     }
 })
