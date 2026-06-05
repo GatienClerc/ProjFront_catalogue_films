@@ -3,9 +3,9 @@
  * Description :            Pinia store to manage the user's history locally
  * Author :                 Thierry Perroud
  * Creation date :          03.06.2026
- * Modified by :            -
- * Modification date :      -
- * Version :                0.1
+ * Modified by :            Thierry Perroud
+ * Modification date :      03.06.2026
+ * Version :                0.2
  **********************************************************************************************************************/
 /***********************************************************************************************************************
  * Imports
@@ -15,7 +15,7 @@ import { defineStore } from 'pinia'
 /***********************************************************************************************************************
  * Store
  **********************************************************************************************************************/
-export const historyStore = defineStore('history', {
+export const useHistoryStore = defineStore('history', {
     state: () => ({
         items: JSON.parse(localStorage.getItem('history')) || []
     }),

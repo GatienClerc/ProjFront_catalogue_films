@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import TMDBService from '@/services/TMDBService'
+import { useHistoryStore } from "@/stores/historyStore.js";
 
 const banner_image_path = "https://media.themoviedb.org/t/p/w1920_and_h600_multi_faces_filter(duotone,00192f,00baff)"
 const poster_image_path = "https://media.themoviedb.org/t/p/w220_and_h330_face/"
@@ -14,7 +15,10 @@ export const useMovieStore = defineStore('movies', {
         trending_banner: "",
 
         in_theater: [],
-        in_theater_loading: false
+        in_theater_loading: false,
+
+        history: [],
+        historyLoading: false,
     }),
 
     actions: {
@@ -82,6 +86,33 @@ export const useMovieStore = defineStore('movies', {
             }
 
             this.in_theater_loading = false
+        },
+
+        async getHistory() {
+            if (this.history.length) this.history = []
+            this.historyLoading = true
+            let historyData = await useHistoryStore().items
+            let response = []
+
+            if (!historyData.length) return
+
+            for (let i = 0; i < historyData.length; i++) {
+                let media = await TMDBService.getMediaDetails(historyData[i].type, historyData[i].id)
+                response.push(media)
+                console.log(response)
+            }
+
+            for (let i = 0; i < response.length; i++) {
+                const media = response[i].data
+                this.history.push({
+                    link: "/display/"+media.id,
+                    title: media.name || media.title,
+                    info: media.first_air_date || media.release_date,
+                    img:poster_image_path+media.poster_path
+                })
+
+                this.historyLoading = false
+            }
         }
     }
 })
