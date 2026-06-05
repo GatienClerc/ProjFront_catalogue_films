@@ -1,9 +1,56 @@
 <script setup>
-import { storeToRefs } from 'pinia'
-import Slider from '@vueform/slider'
+import { ref, watch } from 'vue'
+import { useMovieStore } from '@/stores/movieStore'
 
-let duration = {}
-let note = {}
+const store = useMovieStore()
+const isMovie = ref(true)
+const isSeries = ref(false)
+const duration = ref([0, 200])
+const note = ref([0, 10])
+const date = ref(null)
+const dateFilter = ref('before')
+const selectedGenres = ref([])
+
+watch([isMovie, isSeries], () => {
+  if (isMovie.value) {
+    store.getGenres('movie')
+  } else if (isSeries.value) {
+    store.getGenres('tv')
+  }
+})
+
+watch([duration, note, date, dateFilter, selectedGenres], () => {
+  applyFilters()
+})
+
+const applyFilters = () => {
+  let filters = []
+
+  filters.push({ name: 'vote_average.gte', value: note.value[0] })
+  filters.push({ name: 'vote_average.lte', value: note.value[1] })
+
+  if (store.currentType === 'movie') {
+    filters.push({ name: 'with_runtime.gte', value: duration.value[0] })
+    filters.push({ name: 'with_runtime.lte', value: duration.value[1] })
+  }
+
+  if (date.value) {
+    if (dateFilter.value === 'before') {
+      filters.push({ name: 'primary_release_date.lte', value: date.value })
+    } else {
+      filters.push({ name: 'primary_release_date.gte', value: date.value })
+    }
+  }
+
+  if (selectedGenres.value.length > 0) {
+    filters.push({
+      name: 'with_genres',
+      value: selectedGenres.value.join(',')
+    })
+  }
+
+  store.filterMedia(filters)
+}
 </script>
 
 <template>
