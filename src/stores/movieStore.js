@@ -1,73 +1,26 @@
 import { defineStore } from 'pinia'
 import TMDBService from '@/services/TMDBService'
 
+const banner_image_path = "https://media.themoviedb.org/t/p/w1920_and_h600_multi_faces_filter(duotone,00192f,00baff)"
+const poster_image_path = "https://media.themoviedb.org/t/p/w220_and_h330_face/"
+
 export const useMovieStore = defineStore('movies', {
     state: () => ({
-        movies: [],
-        loading: false,
+        search_movies: [],
+        search_loading: false,
 
-        mock: [
-            {
-                id: 0,
-                title: "Titre1",
-                info: "01.01.2000",
-                img: 'https://image.tmdb.org/t/p/w500/1E5baAaEse26fej7uHcjOgEE2t2.jpg'
-            },
-            {
-                id: 0,
-                title: "Titre2",
-                info: "01.01.2000",
-                img: 'https://image.tmdb.org/t/p/w500/1E5baAaEse26fej7uHcjOgEE2t2.jpg'
-            },
-            {
-                id: 0,
-                title: "Titre3",
-                info: "01.01.2000",
-                img: 'https://image.tmdb.org/t/p/w500/1E5baAaEse26fej7uHcjOgEE2t2.jpg'
-            },
-            {
-                id: 0,
-                title: "Titre4",
-                info: "01.01.2000",
-                img: 'https://image.tmdb.org/t/p/w500/1E5baAaEse26fej7uHcjOgEE2t2.jpg'
-            },
-            {
-                id: 0,
-                title: "Titre5",
-                info: "01.01.2000",
-                img: 'https://image.tmdb.org/t/p/w500/1E5baAaEse26fej7uHcjOgEE2t2.jpg'
-            },
-            {
-                id: 0,
-                title: "Titre6",
-                info: "01.01.2000",
-                img: 'https://image.tmdb.org/t/p/w500/1E5baAaEse26fej7uHcjOgEE2t2.jpg'
-            },
-            {
-                id: 0,
-                title: "Titre7",
-                info: "01.01.2000",
-                img: 'https://image.tmdb.org/t/p/w500/1E5baAaEse26fej7uHcjOgEE2t2.jpg'
-            },
-            {
-                id: 0,
-                title: "Titre8",
-                info: "01.01.2000",
-                img: 'https://image.tmdb.org/t/p/w500/1E5baAaEse26fej7uHcjOgEE2t2.jpg'
-            },
-            {
-                id: 0,
-                title: "Titre9",
-                info: "01.01.2000",
-                img: 'https://image.tmdb.org/t/p/w500/1E5baAaEse26fej7uHcjOgEE2t2.jpg'
-            },
-        ]
+        trending: [],
+        trending_loading: false,
+        trending_banner: "",
+
+        in_theater: [],
+        in_theater_loading: false
     }),
 
     actions: {
         async searchMedia(type, query) {
             if (!query || !query.trim()) {
-                this.movies = []
+                this.search_movies = []
                 return
             }
 
@@ -75,17 +28,60 @@ export const useMovieStore = defineStore('movies', {
                 type = "multi"
             }
 
-            this.loading = true
+            this.search_loading = true
 
             try {
                 const response = await TMDBService.searchMedia(type, query)
-                this.movies = response.data.results
+                this.search_movies = response.data.results
             } catch (error) {
                 console.error('Erreur TMDB:', error)
-                this.movies = []
+                this.search_movies = []
             } finally {
-                this.loading = false
+                this.search_loading = false
             }
+        },
+        /**
+         * get trending medias and format them into a list and get a banner image
+         * @returns {Promise<void>}
+         */
+        async getTrendingMedias(){
+            this.trending_loading = true
+
+            const response = await TMDBService.getTrendingMedias()
+            for (let i = 0; i < response.data.results.length; i++) {
+                const media = response.data.results[i]
+                this.trending.push({
+                    link: "/display/"+media.id,
+                    title: media.name || media.title,
+                    info: media.first_air_date || media.release_date,
+                    img:poster_image_path+media.poster_path})
+            }
+
+            // get random image for the banner
+            const random_index = Math.floor(Math.random() * response.data.results.length)
+            this.trending_banner = banner_image_path+response.data.results[random_index].backdrop_path
+
+            this.trending_loading = false
+        },
+        /**
+         * get movies in theater and format them into a list
+         * @returns {Promise<void>}
+         */
+        async getMoviesInTheatre() {
+            this.in_theater_loading = true
+
+            const response = await TMDBService.getMoviesInTheatre()
+
+            for (let i = 0; i < response.data.results.length; i++) {
+                const media = response.data.results[i]
+                this.in_theater.push({
+                    link: "/display/"+media.id,
+                    title: media.name || media.title,
+                    info: media.first_air_date || media.release_date,
+                    img:poster_image_path+media.poster_path})
+            }
+
+            this.in_theater_loading = false
         }
     }
 })
