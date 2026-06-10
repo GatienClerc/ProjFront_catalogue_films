@@ -24,11 +24,12 @@ export const useHistoryStore = defineStore('history', {
         /**
          * Adds a media (movie or TV show) into the history, in first position
          *
-         * @param media JSON containing the media's ID, title and poster path
+         * @param media JSON containing the media's ID, type and title
          */
         add(media) {
             this.items = this.items.filter(h => h.id !== media.id);     // Removes media from history if it's already in
             this.items.unshift(media);                                  // Adds media into history in front of the rest
+            this.items = this.items.slice(0, 20)                        // Limits to 20 items in the history
 
             this.persist();
         },

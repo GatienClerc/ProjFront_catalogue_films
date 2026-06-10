@@ -18,14 +18,21 @@ export const useMovieStore = defineStore('movies', {
         in_theater_loading: true,
 
         media: {},
+        isFavorite: false,
         trailer_link: "",
         director: {},
         actors: [],
         episodes: [],
         media_loading: true,
 
+        accountId: -1,
+
         history: [],
-        historyLoading: true
+        historyLoading: true,
+
+        favoriteMovies: [],
+        favoriteShows: [],
+        favoritesLoading: true
     }),
 
     actions: {
@@ -103,6 +110,7 @@ export const useMovieStore = defineStore('movies', {
 
             this.in_theater_loading = false
         },
+
         /**
          * getMediaById get a media by it's id
          * @param id the id of the media
@@ -161,9 +169,23 @@ export const useMovieStore = defineStore('movies', {
             this.media_loading = false
         },
 
+        async getAccountId() {
+            this.accountId = -1
+
+            let accountDetails = await TMDBService.getAccountDetails()
+            this.accountId = accountDetails.data.id
+        },
+
+        /**
+         * Fetches the history stored in the browser's LocalStorage through the historyStore Pinia store and the Axios
+         * API service
+         *
+         * @returns JSON
+         */
         async getHistory() {
-            if (this.history.length) this.history = []
             this.historyLoading = true
+
+            if (this.history.length > 0) this.history = []
             let historyData = await useHistoryStore().items
             let response = []
 
@@ -171,20 +193,73 @@ export const useMovieStore = defineStore('movies', {
 
             for (let i = 0; i < historyData.length; i++) {
                 let media = await TMDBService.getMediaDetails(historyData[i].type, historyData[i].id)
+                console.log(media)
                 response.push(media)
-                console.log(response)
             }
 
             for (let i = 0; i < response.length; i++) {
                 const media = response[i].data
+                console.log(media)
                 this.history.push({
-                    link: "/display/"+media.id,
+                    link: {
+                        name: 'display',
+                        params: { id: media.id },
+                        query: { type: media.media_type, title: media.name || media.title }
+                    },
                     title: media.name || media.title,
                     info: media.first_air_date || media.release_date,
-                    img:poster_image_path+media.poster_path
+                    img: poster_image_path + media.poster_path
                 })
-
-                this.historyLoading = false
             }
+
+            this.historyLoading = false
+        },
+
+        async getFavorites(type = "movies") {
+            this.favoritesLoading = true
+
+            if (this.favoriteMovies.length > 0) this.favoriteMovies = []
+            if (this.favoriteShows.length > 0) this.favoriteShows = []
+
+            let favoriteMoviesList = await TMDBService.getFavoriteMedia(this.accountId, "movies")
+            let favoriteShowsList = await TMDBService.getFavoriteMedia(this.accountId, "tv")
+
+            for (let i = 0; i < favoriteMoviesList.data.results.length; i++) {
+                let movie = favoriteMoviesList.data.results[i]
+                this.favoriteMovies.push({
+                    link: {
+                        name: 'display',
+                        params: { id: movie.id },
+                        query: { type: "movie", title: movie.name || movie.title }
+                    },
+                    title: movie.name || movie.title,
+                    info: movie.first_air_date || movie.release_date,
+                    img: poster_image_path + movie.poster_path
+                })
+            }
+
+            for (let i = 0; i < favoriteShowsList.data.results.length; i++) {
+                let show = favoriteShowsList.data.results[i]
+                this.favoriteShows.push({
+                    link: {
+                        name: 'display',
+                        params: { id: show.id },
+                        query: { type: "tv", title: show.name || show.title }
+                    },
+                    title: show.name || show.title,
+                    info: show.first_air_date || show.release_date,
+                    img: poster_image_path + show.poster_path
+                })
+            }
+
+            this.favoritesLoading = false
+        },
+
+        async checkFavorite(type = "movie", mediaId) {
+            this.isFavorite = false
+
+            let response = await TMDBService.isMediaFavorite(type, mediaId)
+            this.isFavorite = response.data.favorite
+        }
     }
 })

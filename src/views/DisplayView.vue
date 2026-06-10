@@ -2,21 +2,34 @@
 import { useRoute } from 'vue-router'
 import Carousel from '@/components/Carousel.vue'
 import { useMovieStore } from '@/stores/movieStore'
-import { watch } from 'vue'
+import { useHistoryStore } from "@/stores/historyStore.js"
+import { onMounted, watch } from 'vue'
+import TMDBService from "@/services/TMDBService.js";
 
 const route = useRoute()
 const poster_image_path = 'https://image.tmdb.org/t/p/w500'
 let favorite = false
 
 const movieStore = useMovieStore()
+const historyStore = useHistoryStore()
 
 watch(
     () => [route.params.id, route.query.type],
     ([id, type]) => {
+      movieStore.getAccountId()
       movieStore.getMediaById(id, type)
+      movieStore.checkFavorite(type, id)
     },
     { immediate: true }
 )
+
+onMounted(() => {
+  historyStore.add({
+    id: route.params.id,
+    type: route.query.type,
+    title: route.query.title
+  })
+})
 </script>
 
 <template>
@@ -43,8 +56,9 @@ watch(
           <button
               class="rounded-circle border d-flex align-items-center justify-content-center"
               style="width:4rem;height:4rem;"
+              @click="TMDBService.manageFavorites(movieStore.accountId, route.query.type, route.params.id, !movieStore.isFavorite)"
           >
-            <i v-if="favorite === false" class="bi bi-heart fs-1"></i>
+            <i v-if="movieStore.isFavorite === false" class="bi bi-heart fs-1"></i>
             <i v-else class="bi bi-heart-fill fs-1"></i>
           </button>
           <a v-if="movieStore.trailer_link" :href="movieStore.trailer_link"

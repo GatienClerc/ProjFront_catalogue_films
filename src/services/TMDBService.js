@@ -194,10 +194,14 @@ export default {
             `/account/${accountId}/favorite`,
             {
                 media_type: type,
-                mediaId: mediaId,
+                media_id: mediaId,
                 favorite: choice
             }
         )
+    },
+
+    isMediaFavorite(type = "movie", mediaId) {
+        return apiClient.get(`/${type}/${mediaId}/account_states`)
     },
 
     /**
@@ -212,6 +216,7 @@ export default {
     getFavoriteMedia(accountId, type = "movies") {
         return apiClient.get(`/account/${accountId}/favorite/${type}`)
     },
+
     /**
      * return the videos linked to the media
      * Route documentations: https://developer.themoviedb.org/reference/tv-series-videos
@@ -227,5 +232,4 @@ export default {
 
         return apiClient.get(`/${type}/${mediaId}/videos`)
     }
-
 }
