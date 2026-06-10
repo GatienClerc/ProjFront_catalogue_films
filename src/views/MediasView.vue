@@ -9,6 +9,12 @@ const store = useMovieStore()
 
 const selected_genres = ref([])
 
+const sortAsc = ref(true);
+
+function toggleSort() {
+  sortAsc.value = !sortAsc.value;
+}
+
 function toggleGenre(id) {
   const list = selected_genres.value
 
@@ -127,6 +133,21 @@ watch(
       </div>
     </div>
   </div>
+
+  <div class="col-2 d-flex align-items-center">
+    <select class="form-select" aria-label="Default select">
+      <option selected value="name">Nom</option>
+      <option value="date">Date</option>
+      <option value="note">Note</option>
+      <option value="famous">Popularité</option>
+    </select>
+
+    <button class="btn btn-outline-primary" @click="toggleSort">
+      <i :class="sortAsc ? 'bi bi-arrow-up' : 'bi bi-arrow-down'"></i>
+    </button>
+
+  </div>
+
   <h1 v-if="store.medias_loading" class="align-self-center">Chargement en cours</h1>
   <div class="row g-3 justify-content-center" v-else-if="store.medias_results.length">
     <Card v-for="media in store.medias_results" :data="{link: media.link,title: media.title, info: media.info, img: media.img}"/>
