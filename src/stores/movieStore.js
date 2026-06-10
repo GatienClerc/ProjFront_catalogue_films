@@ -92,9 +92,9 @@ export const useMovieStore = defineStore('movies', {
             this.in_theater_loading = false
         },
 
-        async fetchGenres() {
+        async fetchGenres(type) {
             try {
-                const res = await TMDBService.getGenres(this.type)
+                const res = await TMDBService.getGenres(type)
                 this.genres = res.data.genres
             } catch (error) {
                 console.error(error)

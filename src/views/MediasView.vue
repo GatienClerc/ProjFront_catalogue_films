@@ -1,15 +1,10 @@
-```vue
 <script setup>
 import { ref } from 'vue'
 import Slider from '@vueform/slider'
-import { onMounted } from 'vue'
+import { watch } from 'vue'
 import { useMovieStore } from '@/stores/movieStore'
 
 const store = useMovieStore()
-
-onMounted(() => {
-  store.fetchGenres()
-})
 
 const selected_genres = ref([])
 
@@ -24,6 +19,16 @@ function toggleGenre(id) {
     list.splice(index, 1)
   }
 }
+watch(
+    () => [store.type],
+    ([type]) => {
+      store.fetchGenres(type)
+      selected_genres.value = []
+      console.log(store.type)
+      console.log(store.genres)
+    },
+    { immediate: true }
+)
 </script>
 
 <template>
@@ -34,12 +39,12 @@ function toggleGenre(id) {
         <fieldset class="border-0">
           <div class="d-flex flex-column gap-2">
             <label>
-              <input type="radio" name="type" value="film" v-model="store.type" checked />
+              <input type="radio" name="type" value="movie" v-model="store.type" checked />
               Films
             </label>
 
             <label>
-              <input type="radio" name="type" value="series" v-model="store.type" />
+              <input type="radio" name="type" value="tv" v-model="store.type" />
               Series
             </label>
           </div>
@@ -135,11 +140,11 @@ button {
   background-color: var(--color-background);
   color: var(--color-text);
   border-radius: 25px;
-  border: 3px solid var(--color-background-mute);
+  border: 3px solid var(--color-border);
 }
 
 button.active {
-  background-color: var(--color-background-mute);
+  background-color: var(--color-border);
   color: var(--color-text);
 }
 </style>
