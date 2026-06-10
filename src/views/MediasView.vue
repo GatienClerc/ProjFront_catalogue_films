@@ -127,9 +127,11 @@ watch(
       </div>
     </div>
   </div>
-  <div class="row g-3 justify-content-center">
+  <h1 v-if="store.medias_loading" class="align-self-center">Chargement en cours</h1>
+  <div class="row g-3 justify-content-center" v-else-if="store.medias_results.length">
     <Card v-for="media in store.medias_results" :data="{link: media.link,title: media.title, info: media.info, img: media.img}"/>
   </div>
+  <h1 v-else class="align-self-center">Aucun résultat</h1>
 </template>
 
 <style>

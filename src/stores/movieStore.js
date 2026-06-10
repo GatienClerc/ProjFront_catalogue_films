@@ -23,7 +23,9 @@ export const useMovieStore = defineStore('movies', {
         duration: [0,400],
         note: [0,10],
         checkAdult: false,
-        medias_results: []
+
+        medias_results: [],
+        medias_loading: true
     }),
 
     actions: {
@@ -103,6 +105,8 @@ export const useMovieStore = defineStore('movies', {
         },
 
         async fetchMedias(filters) {
+            this.medias_loading = true
+
             this.medias_results = []
             const filter = []
 
@@ -146,6 +150,8 @@ export const useMovieStore = defineStore('movies', {
                     img:poster_image_path+media.poster_path})
             }
             console.log(this.medias_results)
+
+            this.medias_loading = false
         }
 
     }
