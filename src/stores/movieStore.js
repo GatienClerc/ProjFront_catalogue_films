@@ -116,7 +116,7 @@ export const useMovieStore = defineStore('movies', {
          * @param type the type of the media (film or tv)
          * @returns {Promise<void>}
          */
-        async getMediaById(id, type){
+        async getMediaById(id, type, name){
             this.media_loading = true
 
             this.media = {}
@@ -132,7 +132,11 @@ export const useMovieStore = defineStore('movies', {
                     for (let i = 0; i < response.data.episodes.length; i++) {
                         const episode = response.data.episodes[i]
                         this.episodes.push({
-                            link: "",
+                            link: {
+                                name: 'display',
+                                params: { id: id },
+                                query: { type: type, title: name }
+                            },
                             title: episode.episode_number+". "+episode.name,
                             info: episode.air_date,
                             img:"https://media.themoviedb.org/t/p/w227_and_h127_face/"+episode.still_path
@@ -158,7 +162,11 @@ export const useMovieStore = defineStore('movies', {
                 for (let i = 0; i < response.data.cast.length; i++) {
                     const actor = response.data.cast[i]
                     this.actors.push({
-                        link: "",
+                        link: {
+                            name: 'display',
+                            params: { id: id },
+                            query: { type: type, title: name }
+                        },
                         title: actor.name,
                         info: actor.character,
                         img:"https://media.themoviedb.org/t/p/w138_and_h175_face/"+actor.profile_path
@@ -217,7 +225,11 @@ export const useMovieStore = defineStore('movies', {
             for (let i = 0; i < response.data.results.length; i++) {
                 const media = response.data.results[i]
                 this.medias_results.push({
-                    link: "/display/"+media.id,
+                    link: {
+                        name: 'display',
+                        params: { id: media.id },
+                        query: { type: "movie", title: media.name || media.title }
+                    },
                     title: media.name || media.title,
                     info: media.first_air_date || media.release_date,
                     img:poster_image_path+media.poster_path})
