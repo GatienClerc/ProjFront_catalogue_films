@@ -4,18 +4,7 @@
 ![Pinia](https://img.shields.io/badge/Pinia-State-yellow?logo=javascript)
 ![Axios](https://img.shields.io/badge/Axios-HTTP-blue?logo=axios)
 
-Application Vue.js permettant d’explorer un catalogue de films via l’API TMDB 🎬
-
-## 🪧 À propos
-
-Ce projet a été créé pour le module ProjFront de 2ème année CFC aux CPNV.  
-Il s'agit d'un projet Vue utilisant Pinia et Axios, qui a pour objectif de faire le front-end d'une API.  
-
-
-L'API choisie est :  
-👉 [themoviedb](https://www.themoviedb.org)
-
-Cette application permet d'afficher, rechercher et explorer un catalogue de films via les données de  The Movie Database (TMDB).
+##### Application Vue.js permettant d’explorer un catalogue de films via l’API TMDB 🎬
 
 ---
 ## Table des matières
@@ -28,11 +17,23 @@ Cette application permet d'afficher, rechercher et explorer un catalogue de film
 - 📚 [Documentation](#documentation)
 
 ---
+## 🪧 À propos
+
+Ce projet a été réalisé par des étudiants informaticiens CFC de 2ème années au CPNV lors du module ProjFront.  
+Il s'agit d'un projet Vue utilisant Pinia et Axios, qui a pour objectif de développer le front-end d'une application.
+
+
+L'API choisie est :  
+👉 [themoviedb](https://www.themoviedb.org)
+
+Cette application permet d'afficher, rechercher et explorer un catalogue de films via les données de  The Movie Database (TMDB).
+
+---
 ## 📦 Prérequis
 Avant de commencer, assurez-vous d’avoir :
-1. [Pour utiliser l’API, il est nécessaire de créer un compte](https://www.themoviedb.org/signup)
-2. [Node.js](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
-3. [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+1. [Un compte sur The Movie DB](https://www.themoviedb.org/signup)
+2. [Un accès a l'utilisation de l'API](https://www.themoviedb.org/settings/api/request)
+3. [Node.js et npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 4. [Git installé](https://git-scm.com/install/windows)
 
 ----
@@ -53,11 +54,7 @@ Avant de commencer, assurez-vous d’avoir :
 
     Créer un fichier .env à la racine :
     ```text
-    VITE_TMDB_TOKEN="your_api_key_here"
-    ```
-4. Lancer le projet en local
-   ```bash
-    npm run dev
+    VITE_TMDB_TOKEN="your_api_token_acces"
     ```
 ---
 ## 🛠️ Utilisation
@@ -86,7 +83,7 @@ Lance les outils de développement
 
 - [Vite — Outil de build](https://vitejs.dev)
 
-- [Bootstrap — Outil pour le responsive](https://getbootstrap.com)
+- [Bootstrap — Outil pour la responsivité](https://getbootstrap.com)
 
 - [Vueform — Outil pour les sliders](https://vueform.com/reference/slider-element)
 
