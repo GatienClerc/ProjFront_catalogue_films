@@ -16,10 +16,10 @@ export const useMovieStore = defineStore('movies', {
         in_theater: [],
         in_theater_loading: false,
 
-        type: "",
+        type: "movie",
         genres: [],
         date: "",
-        gte_lte: "",
+        gte_lte: "after",
         duration: [0,400],
         note: [0,10],
         checkAdult: false,
@@ -103,21 +103,49 @@ export const useMovieStore = defineStore('movies', {
         },
 
         async fetchMedias(filters) {
-            filter = {}
-            if (filters.type === "tv") {
-                if (filters.gte_lte === "after") {
-                    filter.first_air_date.gte = filters.date
+            this.medias_results = []
+            const filter = []
+
+            if (filters.date) {
+                if (filters.type === "tv") {
+                    if (filters.gte_lte === "after") {
+                        filter.push(`first_air_date.gte=${filters.date}`);
+                    } else {
+                        filter.push(`first_air_date.lte=${filters.date}`);
+                    }
                 } else {
-                    filter.first_air_date.lte = filters.date
+                    if (filters.gte_lte === "after") {
+                        filter.push(`primary_release_date.gte=${filters.date}`);
+                    } else {
+                        filter.push(`primary_release_date.lte=${filters.date}`);
+                    }
                 }
-                filter.with_genres = filters.genres
-                filter.include_adult = filters.checkAdult
-                filter.vote_average.gte = filters.note[0]
-                filter.vote_average.lte = filters.note[1]
-                filter.with_runtime.gte = filters.duration[0]
-                filter.with_runtime.lte = filters.duration[1]
             }
-            TMDBService.filterMedia(filters.type, filter)
+
+            if (filters.genres?.length) {
+                filter.push(`with_genres=${filters.genres.join(",")}`);
+            }
+
+            filter.push(`include_adult=${filters.checkAdult}`);
+
+            filter.push(`vote_average.gte=${filters.note[0]}`);
+            filter.push(`vote_average.lte=${filters.note[1]}`);
+
+            filter.push(`with_runtime.gte=${filters.duration[0]}`);
+            filter.push(`with_runtime.lte=${filters.duration[1]}`);
+
+            console.log(filter);
+
+            const response = await TMDBService.filterMedia(filters.type, filter);
+            for (let i = 0; i < response.data.results.length; i++) {
+                const media = response.data.results[i]
+                this.medias_results.push({
+                    link: "/display/"+media.id,
+                    title: media.name || media.title,
+                    info: media.first_air_date || media.release_date,
+                    img:poster_image_path+media.poster_path})
+            }
+            console.log(this.medias_results)
         }
 
     }

@@ -41,7 +41,6 @@ watch(
       checkAdult: store.checkAdult
     }),
     (filters) => {
-      console.log(filters)
       store.fetchMedias(filters)
     },
     { immediate: true }
