@@ -86,12 +86,7 @@ function moveCarousel(direction) {
           <Card
               v-for="item in items"
               :key="item.name"
-              :data="{
-                link: item.link,
-                title: item.title,
-                info: item.info,
-                img: item.img
-            }"
+              :data="item"
           />
         </div>
       </div>
