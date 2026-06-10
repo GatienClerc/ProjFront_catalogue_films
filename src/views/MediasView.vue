@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import Slider from '@vueform/slider'
 import { watch } from 'vue'
 import { useMovieStore } from '@/stores/movieStore'
+import Card from "@/components/Card.vue";
+import data from "bootstrap/js/src/dom/data.js";
 
 const store = useMovieStore()
 
@@ -19,13 +21,28 @@ function toggleGenre(id) {
     list.splice(index, 1)
   }
 }
+// change type
 watch(
     () => [store.type],
     ([type]) => {
       store.fetchGenres(type)
       selected_genres.value = []
-      console.log(store.type)
-      console.log(store.genres)
+    },
+    { immediate: true }
+)
+// search
+watch(
+    () => ({
+      type: store.type,
+      genres: [...selected_genres.value],
+      date: store.date,
+      gte_lte: store.gte_lte,
+      duration: [...store.duration],
+      note: [...store.note],
+      checkAdult: store.checkAdult
+    }),
+    (filters) => {
+      console.log(filters)
     },
     { immediate: true }
 )
@@ -110,6 +127,9 @@ watch(
         </div>
       </div>
     </div>
+  </div>
+  <div class="row g-3 justify-content-center">
+    <Card v-for="media in store.medias_results" :data="{link: media.link,title: media.title, info: media.info, img: media.img}"/>
   </div>
 </template>
 

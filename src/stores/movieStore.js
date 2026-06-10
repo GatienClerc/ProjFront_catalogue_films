@@ -23,6 +23,7 @@ export const useMovieStore = defineStore('movies', {
         duration: [0,400],
         note: [0,10],
         checkAdult: false,
+        medias_results: []
     }),
 
     actions: {
