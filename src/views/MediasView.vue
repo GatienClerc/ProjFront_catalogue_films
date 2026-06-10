@@ -4,7 +4,6 @@ import Slider from '@vueform/slider'
 import { watch } from 'vue'
 import { useMovieStore } from '@/stores/movieStore'
 import Card from "@/components/Card.vue";
-import data from "bootstrap/js/src/dom/data.js";
 
 const store = useMovieStore()
 
@@ -43,6 +42,7 @@ watch(
     }),
     (filters) => {
       console.log(filters)
+      store.fetchMedias(filters)
     },
     { immediate: true }
 )

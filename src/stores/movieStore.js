@@ -100,6 +100,24 @@ export const useMovieStore = defineStore('movies', {
             } catch (error) {
                 console.error(error)
             }
+        },
+
+        async fetchMedias(filters) {
+            filter = {}
+            if (filters.type === "tv") {
+                if (filters.gte_lte === "after") {
+                    filter.first_air_date.gte = filters.date
+                } else {
+                    filter.first_air_date.lte = filters.date
+                }
+                filter.with_genres = filters.genres
+                filter.include_adult = filters.checkAdult
+                filter.vote_average.gte = filters.note[0]
+                filter.vote_average.lte = filters.note[1]
+                filter.with_runtime.gte = filters.duration[0]
+                filter.with_runtime.lte = filters.duration[1]
+            }
+            TMDBService.filterMedia(filters.type, filter)
         }
 
     }
