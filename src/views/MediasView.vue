@@ -9,7 +9,7 @@ const store = useMovieStore()
 
 const selected_genres = ref([])
 
-const sortAsc = ref(true);
+const sortAsc = ref(false);
 
 function toggleSort() {
   sortAsc.value = !sortAsc.value;
@@ -134,15 +134,15 @@ watch(
     </div>
   </div>
 
-  <div class="col-2 d-flex align-items-center">
+  <div class="d-flex align-items-center m-1 ms-4" style="width: 12rem;">
     <select class="form-select" aria-label="Default select">
-      <option selected value="name">Nom</option>
+      <option selected value="popularity">Popularité</option>
+      <option value="name">Nom</option>
       <option value="date">Date</option>
       <option value="note">Note</option>
-      <option value="famous">Popularité</option>
     </select>
 
-    <button class="btn btn-outline-primary" @click="toggleSort">
+    <button class="btn m-1" @click="toggleSort">
       <i :class="sortAsc ? 'bi bi-arrow-up' : 'bi bi-arrow-down'"></i>
     </button>
 
@@ -188,5 +188,15 @@ button {
 button.active {
   background-color: var(--color-border);
   color: var(--color-text);
+}
+
+.btn, .form-select {
+  background-color: var(--vt-c-black-mute);
+  color: var(--color-text);
+  border-color: var(--vt-c-divider-dark-2);
+}
+
+.btn:hover {
+  border-color: var(--vt-c-divider-dark-1);
 }
 </style>
