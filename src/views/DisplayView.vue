@@ -8,7 +8,6 @@ import TMDBService from "@/services/TMDBService.js";
 
 const route = useRoute()
 const poster_image_path = 'https://image.tmdb.org/t/p/w500'
-let favorite = false
 
 const movieStore = useMovieStore()
 const historyStore = useHistoryStore()
@@ -53,6 +52,7 @@ onMounted(() => {
         </div>
         <!-- Actions -->
         <div class="d-flex flex-wrap gap-2 my-3">
+          <!-- TODO: Fix favorites button to dynamically update -->
           <button
               class="rounded-circle border d-flex align-items-center justify-content-center"
               style="width:4rem;height:4rem;"

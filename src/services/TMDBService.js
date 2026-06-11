@@ -4,8 +4,8 @@
  * Author :                 Thierry Perroud
  * Creation date :          06.05.2026
  * Modified by :            Thierry Perroud
- * Modification date :      03.06.2026
- * Version :                0.6
+ * Modification date :      10.06.2026
+ * Version :                0.8
  **********************************************************************************************************************/
 /***********************************************************************************************************************
  * Imports
@@ -200,7 +200,16 @@ export default {
         )
     },
 
-    isMediaFavorite(type = "movie", mediaId) {
+    /**
+     * Returns whether or not a media is favorited, rated and added to the watchlist
+     * Route documentations: https://developer.themoviedb.org/reference/movie-account-states
+     *                       https://developer.themoviedb.org/reference/tv-series-account-states
+     *
+     * @param type Enum("movie", "tv")
+     * @param mediaId Integer representing the ID of the movie or TV show (must be 0 or more)
+     * @returns JSON
+     */
+    mediaAccountStates(type = "movie", mediaId) {
         return apiClient.get(`/${type}/${mediaId}/account_states`)
     },
 

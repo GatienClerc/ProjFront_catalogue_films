@@ -169,6 +169,11 @@ export const useMovieStore = defineStore('movies', {
             this.media_loading = false
         },
 
+        /**
+         * Fetches the user's account ID through the Axios API service.
+         *
+         * @returns {Promise<void>}
+         */
         async getAccountId() {
             this.accountId = -1
 
@@ -180,7 +185,7 @@ export const useMovieStore = defineStore('movies', {
          * Fetches the history stored in the browser's LocalStorage through the historyStore Pinia store and the Axios
          * API service
          *
-         * @returns JSON
+         * @returns {Promise<void>}
          */
         async getHistory() {
             this.historyLoading = true
@@ -203,19 +208,25 @@ export const useMovieStore = defineStore('movies', {
                 this.history.push({
                     link: {
                         name: 'display',
-                        params: { id: media.id },
-                        query: { type: media.media_type, title: media.name || media.title }
+                        params: { id: historyData[i].id },
+                        query: { type: historyData[i].type, title: historyData[i].title }
                     },
-                    title: media.name || media.title,
-                    info: media.first_air_date || media.release_date,
-                    img: poster_image_path + media.poster_path
+                    title: historyData[i].title,
+                    info: media.air_date || media.release_date,
+                    img: poster_image_path + media.poster_path   // TODO: Fix poster image to get the French poster
                 })
             }
 
             this.historyLoading = false
         },
 
-        async getFavorites(type = "movies") {
+        /**
+         * Fetches both the favorited movies of the user and the favorited TV shows of the user through the Axios API
+         * service.
+         *
+         * @returns {Promise<void>}
+         */
+        async getFavorites() {
             this.favoritesLoading = true
 
             if (this.favoriteMovies.length > 0) this.favoriteMovies = []
@@ -255,10 +266,17 @@ export const useMovieStore = defineStore('movies', {
             this.favoritesLoading = false
         },
 
+        /**
+         * Checks if the designated media is favorited by the user or not
+         *
+         * @param type Enum("movie", "tv")
+         * @param mediaId Integer representing the ID of the movie or TV show (must be 0 or more)
+         * @returns {Promise<void>}
+         */
         async checkFavorite(type = "movie", mediaId) {
             this.isFavorite = false
 
-            let response = await TMDBService.isMediaFavorite(type, mediaId)
+            let response = await TMDBService.mediaAccountStates(type, mediaId)
             this.isFavorite = response.data.favorite
         }
     }
