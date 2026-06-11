@@ -9,10 +9,12 @@ const store = useMovieStore()
 
 const selected_genres = ref([])
 
-const sortAsc = ref(false);
+const sort_asc = ref(false);
+
+const sort_by = ref('popularity')
 
 function toggleSort() {
-  sortAsc.value = !sortAsc.value;
+  sort_asc.value = !sort_asc.value;
 }
 
 function toggleGenre(id) {
@@ -44,7 +46,9 @@ watch(
       gte_lte: store.gte_lte,
       duration: [...store.duration],
       note: [...store.note],
-      checkAdult: store.checkAdult
+      checkAdult: store.checkAdult,
+      sort_by: sort_by.value,
+      asc: sort_asc.value
     }),
     (filters) => {
       store.fetchMedias(filters)
@@ -135,7 +139,7 @@ watch(
   </div>
 
   <div class="d-flex align-items-center m-1 ms-4" style="width: 12rem;">
-    <select class="form-select" aria-label="Default select">
+    <select class="form-select" aria-label="Default select" v-model="sort_by">
       <option selected value="popularity">Popularité</option>
       <option value="name">Nom</option>
       <option value="date">Date</option>
@@ -143,7 +147,7 @@ watch(
     </select>
 
     <button class="btn m-1" @click="toggleSort">
-      <i :class="sortAsc ? 'bi bi-arrow-up' : 'bi bi-arrow-down'"></i>
+      <i :class="sort_asc ? 'bi bi-arrow-up' : 'bi bi-arrow-down'"></i>
     </button>
 
   </div>

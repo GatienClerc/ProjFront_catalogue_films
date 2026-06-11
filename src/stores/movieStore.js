@@ -4,6 +4,21 @@ import TMDBService from '@/services/TMDBService'
 const banner_image_path = "https://media.themoviedb.org/t/p/w1920_and_h600_multi_faces_filter(duotone,00192f,00baff)"
 const poster_image_path = "https://media.themoviedb.org/t/p/w220_and_h330_face/"
 
+const sort = {
+    tv : {
+        date : "first_air_date",
+        name : "name",
+        popularity : "popularity",
+        note : "vote_average"
+    },
+    movie : {
+        date : "primary_release_date",
+        name : "title",
+        popularity : "popularity",
+        note : "vote_average"
+    }
+}
+
 export const useMovieStore = defineStore('movies', {
     state: () => ({
         search_movies: [],
@@ -218,6 +233,12 @@ export const useMovieStore = defineStore('movies', {
 
             filter.push(`with_runtime.gte=${filters.duration[0]}`);
             filter.push(`with_runtime.lte=${filters.duration[1]}`);
+
+            const asc_desc = filters.asc ? ".asc" : ".desc";
+
+            console.log(filters.sort_by);
+
+            filter.push(`sort_by=${sort[filters.type][filters.sort_by]+asc_desc}`)
 
             console.log(filter);
 
