@@ -242,7 +242,7 @@ export const useMovieStore = defineStore('movies', {
 
             console.log(filter);
 
-            const response = await TMDBService.filterMedia(filters.type, filter);
+            const response = await TMDBService.filterMedia(filters.type, filter, filters.page);
             for (let i = 0; i < response.data.results.length; i++) {
                 const media = response.data.results[i]
                 this.medias_results.push({

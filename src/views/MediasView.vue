@@ -13,8 +13,14 @@ const sort_asc = ref(false);
 
 const sort_by = ref('popularity')
 
+const page = ref(1)
+
 function toggleSort() {
   sort_asc.value = !sort_asc.value;
+}
+
+function movePage(nb) {
+  page.value += nb
 }
 
 function toggleGenre(id) {
@@ -48,7 +54,8 @@ watch(
       note: [...store.note],
       checkAdult: store.checkAdult,
       sort_by: sort_by.value,
-      asc: sort_asc.value
+      asc: sort_asc.value,
+      page: page.value
     }),
     (filters) => {
       store.fetchMedias(filters)
@@ -157,6 +164,19 @@ watch(
     <Card v-for="media in store.medias_results" :data="{link: media.link,title: media.title, info: media.info, img: media.img}"/>
   </div>
   <h1 v-else class="align-self-center">Aucun résultat</h1>
+  <div class="d-flex justify-content-center">
+    <div class="btn-group m-2" role="group">
+      <button type="button" class="btn" @click="movePage(-1)" :disabled="page === 1">
+        <i class="bi bi-arrow-left"></i>
+      </button>
+      <button type="button" class="btn">
+        {{ page }}
+      </button>
+      <button type="button" class="btn" @click="movePage(1)">
+        <i class="bi bi-arrow-right"></i>
+      </button>
+    </div>
+  </div>
 </template>
 
 <style>
@@ -201,6 +221,10 @@ button.active {
 }
 
 .btn:hover {
+  border-color: var(--vt-c-divider-dark-1);
+}
+
+.btn:disabled {
   border-color: var(--vt-c-divider-dark-1);
 }
 </style>
