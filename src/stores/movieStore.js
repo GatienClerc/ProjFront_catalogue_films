@@ -217,7 +217,11 @@ export const useMovieStore = defineStore('movies', {
                 console.error(error)
             }
         },
-
+        /**
+         * search media with filter and sort
+         * @param filters the filter param
+         * @returns {Promise<void>}
+         */
         async fetchMedias(filters) {
             this.medias_loading = true
 
