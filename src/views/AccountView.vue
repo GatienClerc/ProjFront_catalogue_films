@@ -1,20 +1,16 @@
 <script setup>
 import Carousel from "@/components/Carousel.vue";
 import { useMovieStore } from "@/stores/movieStore.js";
-import { watch } from "vue";
+import { onMounted } from "vue";
 const TMDBToken = import.meta.env.VITE_TMDB_TOKEN
 
 const movieStore = useMovieStore()
 
-watch(
-    () => {},
-    () => {
-      movieStore.getAccountId()
-      movieStore.getHistory()
-      movieStore.getFavorites()
-    },
-    { immediate: true }
-)
+onMounted(async () => {
+  await movieStore.getAccountId();
+  await movieStore.getHistory();
+  await movieStore.getFavorites();
+})
 </script>
 
 <template>
