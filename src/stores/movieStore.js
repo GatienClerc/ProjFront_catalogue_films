@@ -198,13 +198,11 @@ export const useMovieStore = defineStore('movies', {
 
             for (let i = 0; i < historyData.length; i++) {
                 let media = await TMDBService.getMediaDetails(historyData[i].type, historyData[i].id)
-                console.log(media)
                 response.push(media)
             }
 
             for (let i = 0; i < response.length; i++) {
                 const media = response[i].data
-                console.log(media)
                 this.history.push({
                     link: {
                         name: 'display',
@@ -213,7 +211,7 @@ export const useMovieStore = defineStore('movies', {
                     },
                     title: historyData[i].title,
                     info: media.air_date || media.release_date,
-                    img: poster_image_path + media.poster_path   // TODO: Fix poster image to get the French poster
+                    img: poster_image_path + media.poster_path
                 })
             }
 
