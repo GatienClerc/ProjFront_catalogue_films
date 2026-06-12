@@ -2,23 +2,39 @@
 import { useRoute } from 'vue-router'
 import Carousel from '@/components/Carousel.vue'
 import { useMovieStore } from '@/stores/movieStore'
-import { watch } from 'vue'
+import { useHistoryStore } from '@/stores/historyStore.js'
+import {ref, watch} from 'vue'
+import TMDBService from '@/services/TMDBService.js'
 import mock_default_flb from '@/assets/mock_default_flb.webp'
 
 const route = useRoute()
 const poster_image_path = 'https://image.tmdb.org/t/p/w500'
-let favorite = false
+
+let isFavorite = ref(false)
 
 const movieStore = useMovieStore()
+const historyStore = useHistoryStore()
 
 watch(
     () => [route.params.id, route.query.type, route.query.title],
-    ([id, type, name]) => {
-      movieStore.getMediaById(id, type, name)
+    ([id, type, title]) => {
+      movieStore.getAccountId()
+      movieStore.getMediaById(id, type, title)
+      movieStore.checkFavorite(type, id)
+      historyStore.add({
+        id: route.params.id,
+        type: route.query.type,
+        title: route.query.title
+      })
     },
     { immediate: true }
 )
 
+function toggleFavorite() {
+  movieStore.isFavorite = !movieStore.isFavorite
+  TMDBService.manageFavorites(movieStore.accountId, route.query.type, route.params.id, movieStore.isFavorite)
+}
+  
 function getImage(path, base, fallback) {
   if (!path || path === "null") return fallback
   return base + path
@@ -49,8 +65,9 @@ function getImage(path, base, fallback) {
           <button
               class="rounded-circle border d-flex align-items-center justify-content-center"
               style="width:4rem;height:4rem;"
+              @click="toggleFavorite()"
           >
-            <i v-if="favorite === false" class="bi bi-heart fs-1"></i>
+            <i v-if="!movieStore.isFavorite" class="bi bi-heart fs-1"></i>
             <i v-else class="bi bi-heart-fill fs-1"></i>
           </button>
           <a v-if="movieStore.trailer_link" :href="movieStore.trailer_link"

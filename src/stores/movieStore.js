@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import TMDBService from '@/services/TMDBService'
+import { useHistoryStore } from "@/stores/historyStore.js";
 
 const banner_image_path = "https://media.themoviedb.org/t/p/w1920_and_h600_multi_faces_filter(duotone,00192f,00baff)"
 const poster_image_path = "https://media.themoviedb.org/t/p/w220_and_h330_face/"
@@ -44,6 +45,7 @@ export const useMovieStore = defineStore('movies', {
         in_theater_loading: true,
 
         media: {},
+        isFavorite: false,
         trailer_link: "",
         director: {},
         actors: [],
@@ -59,7 +61,16 @@ export const useMovieStore = defineStore('movies', {
         checkAdult: false,
 
         medias_results: [],
-        medias_loading: true
+        medias_loading: true,
+
+        accountId: -1,
+
+        history: [],
+        historyLoading: true,
+
+        favoriteMovies: [],
+        favoriteShows: [],
+        favoritesLoading: true
     }),
 
     actions: {
@@ -143,6 +154,7 @@ export const useMovieStore = defineStore('movies', {
 
             this.in_theater_loading = false
         },
+
         /**
          * getMediaById get a media by it's id
          * @param id the id of the media
@@ -217,6 +229,116 @@ export const useMovieStore = defineStore('movies', {
             }
             this.media_loading = false
         },
+
+        /**
+         * Fetches the user's account ID through the Axios API service.
+         *
+         * @returns {Promise<void>}
+         */
+        async getAccountId() {
+            this.accountId = -1
+
+            let accountDetails = await TMDBService.getAccountDetails()
+            this.accountId = accountDetails.data.id
+        },
+
+        /**
+         * Fetches the history stored in the browser's LocalStorage through the historyStore Pinia store and the Axios
+         * API service
+         *
+         * @returns {Promise<void>}
+         */
+        async getHistory() {
+            this.historyLoading = true
+
+            if (this.history.length > 0) this.history = []
+            let historyData = await useHistoryStore().items
+            let response = []
+
+            if (!historyData.length) return
+
+            for (let i = 0; i < historyData.length; i++) {
+                let media = await TMDBService.getMediaDetails(historyData[i].type, historyData[i].id)
+                response.push(media)
+            }
+
+            for (let i = 0; i < response.length; i++) {
+                const media = response[i].data
+                this.history.push({
+                    link: {
+                        name: 'display',
+                        params: { id: historyData[i].id },
+                        query: { type: historyData[i].type, title: historyData[i].title }
+                    },
+                    title: historyData[i].title,
+                    info: media.air_date || media.release_date,
+                    img: poster_image_path + media.poster_path
+                })
+            }
+
+            this.historyLoading = false
+        },
+
+        /**
+         * Fetches both the favorited movies of the user and the favorited TV shows of the user through the Axios API
+         * service.
+         *
+         * @returns {Promise<void>}
+         */
+        async getFavorites() {
+            this.favoritesLoading = true
+
+            if (this.favoriteMovies.length > 0) this.favoriteMovies = []
+            if (this.favoriteShows.length > 0) this.favoriteShows = []
+
+            let favoriteMoviesList = await TMDBService.getFavoriteMedia(this.accountId, "movies")
+            let favoriteShowsList = await TMDBService.getFavoriteMedia(this.accountId, "tv")
+
+            for (let i = 0; i < favoriteMoviesList.data.results.length; i++) {
+                let movie = favoriteMoviesList.data.results[i]
+                this.favoriteMovies.push({
+                    link: {
+                        name: 'display',
+                        params: { id: movie.id },
+                        query: { type: "movie", title: movie.name || movie.title }
+                    },
+                    title: movie.name || movie.title,
+                    info: movie.first_air_date || movie.release_date,
+                    img: poster_image_path + movie.poster_path
+                })
+            }
+
+            for (let i = 0; i < favoriteShowsList.data.results.length; i++) {
+                let show = favoriteShowsList.data.results[i]
+                this.favoriteShows.push({
+                    link: {
+                        name: 'display',
+                        params: { id: show.id },
+                        query: { type: "tv", title: show.name || show.title }
+                    },
+                    title: show.name || show.title,
+                    info: show.first_air_date || show.release_date,
+                    img: poster_image_path + show.poster_path
+                })
+            }
+
+            this.favoritesLoading = false
+        },
+
+        /**
+         * Checks if the designated media is favorited by the user or not
+         *
+         * @param type Enum("movie", "tv")
+         * @param mediaId Integer representing the ID of the movie or TV show (must be 0 or more)
+         * @returns {Promise<void>}
+         */
+        async checkFavorite(type = "movie", mediaId) {
+            this.isFavorite = false
+
+            let response = await TMDBService.mediaAccountStates(type, mediaId)
+            this.isFavorite = response.data.favorite
+        },
+
         /**
          * get genre by type
          * @param type the type of medias
@@ -230,6 +352,11 @@ export const useMovieStore = defineStore('movies', {
                 console.error(error)
             }
         },
+        /**
+         * search media with filter and sort
+         * @param filters the filter param
+         * @returns {Promise<void>}
+         */
         async fetchMedias(filters) {
             this.medias_loading = true
 

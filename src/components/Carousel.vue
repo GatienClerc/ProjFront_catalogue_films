@@ -2,8 +2,10 @@
 import Card from "@/components/Card.vue";
 import { ref } from "vue";
 import { useMovieStore } from '@/stores/movieStore'
+import { useHistoryStore } from "@/stores/historyStore.js";
 
 const movieStore = useMovieStore()
+const historyStore = useHistoryStore()
 
 const props = defineProps({
   source: {

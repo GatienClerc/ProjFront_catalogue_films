@@ -3,9 +3,9 @@
  * Description :            Pinia store to manage the user's history locally
  * Author :                 Thierry Perroud
  * Creation date :          03.06.2026
- * Modified by :            -
- * Modification date :      -
- * Version :                0.1
+ * Modified by :            Thierry Perroud
+ * Modification date :      03.06.2026
+ * Version :                0.2
  **********************************************************************************************************************/
 /***********************************************************************************************************************
  * Imports
@@ -15,20 +15,21 @@ import { defineStore } from 'pinia'
 /***********************************************************************************************************************
  * Store
  **********************************************************************************************************************/
-export const historyStore = defineStore('history', {
+export const useHistoryStore = defineStore('history', {
     state: () => ({
-        items: JSON.parse(localStorage.getItem('history')) || []
+        items: JSON.parse(localStorage.getItem('history') || '[]')
     }),
 
     actions: {
         /**
          * Adds a media (movie or TV show) into the history, in first position
          *
-         * @param media JSON containing the media's ID, title and poster path
+         * @param media JSON containing the media's ID, type and title
          */
         add(media) {
             this.items = this.items.filter(h => h.id !== media.id);     // Removes media from history if it's already in
             this.items.unshift(media);                                  // Adds media into history in front of the rest
+            this.items = this.items.slice(0, 20)                        // Limits to 20 items in the history
 
             this.persist();
         },
