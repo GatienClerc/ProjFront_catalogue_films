@@ -172,7 +172,7 @@ watch(
       <button type="button" class="btn">
         {{ page }}
       </button>
-      <button type="button" class="btn" @click="movePage(1)">
+      <button type="button" class="btn" @click="movePage(1)" :disabled="store.medias_results.length === 0">
         <i class="bi bi-arrow-right"></i>
       </button>
     </div>
