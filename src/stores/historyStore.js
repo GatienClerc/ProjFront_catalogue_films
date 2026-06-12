@@ -17,7 +17,7 @@ import { defineStore } from 'pinia'
  **********************************************************************************************************************/
 export const useHistoryStore = defineStore('history', {
     state: () => ({
-        items: JSON.parse(localStorage.getItem('history')) || []
+        items: JSON.parse(localStorage.getItem('history') || '[]')
     }),
 
     actions: {
