@@ -4,6 +4,15 @@ import TMDBService from '@/services/TMDBService'
 const banner_image_path = "https://media.themoviedb.org/t/p/w1920_and_h600_multi_faces_filter(duotone,00192f,00baff)"
 const poster_image_path = "https://media.themoviedb.org/t/p/w220_and_h330_face/"
 
+import mock_default_fl from '@/assets/mock_default_fl.webp'
+import mock_default_ep from '@/assets/mock_default_ep.webp'
+import mock_default_ac from '@/assets/mock_default_ac.webp'
+
+function getImage(path, base, fallback) {
+    if (!path || path === "null") return fallback
+    return base + path
+}
+
 export const useMovieStore = defineStore('movies', {
     state: () => ({
         search_movies: [],
@@ -66,7 +75,7 @@ export const useMovieStore = defineStore('movies', {
                     },
                     title: media.name || media.title,
                     info: media.first_air_date || media.release_date,
-                    img:poster_image_path+media.poster_path})
+                    img: getImage(media.poster_path, poster_image_path, mock_default_fl)})
             }
 
             // get random image for the banner
@@ -94,7 +103,7 @@ export const useMovieStore = defineStore('movies', {
                     },
                     title: media.name || media.title,
                     info: media.first_air_date || media.release_date,
-                    img:poster_image_path+media.poster_path})
+                    img: getImage(media.poster_path, poster_image_path, mock_default_fl)})
             }
 
             this.in_theater_loading = false
@@ -124,7 +133,12 @@ export const useMovieStore = defineStore('movies', {
                             link: "",
                             title: episode.episode_number+". "+episode.name,
                             info: episode.air_date,
-                            img:"https://media.themoviedb.org/t/p/w227_and_h127_face/"+episode.still_path
+                            img: getImage(
+                                episode.still_path,
+                                "https://media.themoviedb.org/t/p/w227_and_h127_face/",
+                                mock_default_ep
+                            )
+
                         })
                     }
                 }
@@ -150,8 +164,12 @@ export const useMovieStore = defineStore('movies', {
                         link: "",
                         title: actor.name,
                         info: actor.character,
-                        img:"https://media.themoviedb.org/t/p/w138_and_h175_face/"+actor.profile_path
-                        })
+                        img: getImage(
+                            actor.profile_path,
+                            "https://media.themoviedb.org/t/p/w138_and_h175_face/",
+                            mock_default_ac
+                        )
+                    })
                 }
             }
             this.media_loading = false
