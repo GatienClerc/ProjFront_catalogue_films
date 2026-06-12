@@ -5,7 +5,7 @@ import { useMovieStore } from '@/stores/movieStore'
 import { useHistoryStore } from '@/stores/historyStore.js'
 import {ref, watch} from 'vue'
 import TMDBService from '@/services/TMDBService.js'
-import mock_default_flb from '@/assets/mock_default_flb.webp'
+import placeholder_large_poster from '@/assets/placeholder_large_poster.webp'
 
 const route = useRoute()
 const poster_image_path = 'https://image.tmdb.org/t/p/w500'
@@ -47,7 +47,7 @@ function getImage(path, base, fallback) {
       <!-- Poster -->
       <div class="col-12 col-md-4">
         <img
-            :src="getImage(movieStore.media.poster_path, poster_image_path, mock_default_flb)" alt="Affiche du film" class="img-fluid rounded shadow w-100 poster"/>
+            :src="getImage(movieStore.media.poster_path, poster_image_path, placeholder_large_poster)" alt="Affiche du film" class="img-fluid rounded shadow w-100 poster"/>
       </div>
       <!-- Movie Info -->
       <div class="col-12 col-md-8">

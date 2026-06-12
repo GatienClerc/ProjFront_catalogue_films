@@ -5,9 +5,9 @@ import { useHistoryStore } from "@/stores/historyStore.js";
 const banner_image_path = "https://media.themoviedb.org/t/p/w1920_and_h600_multi_faces_filter(duotone,00192f,00baff)"
 const poster_image_path = "https://media.themoviedb.org/t/p/w220_and_h330_face/"
 
-import mock_default_fl from '@/assets/mock_default_fl.webp'
-import mock_default_ep from '@/assets/mock_default_ep.webp'
-import mock_default_ac from '@/assets/mock_default_ac.webp'
+import placeholder_poster from '@/assets/placeholder_poster.webp'
+import placeholder_episode from '@/assets/placeholder_episode.webp'
+import placeholder_actor from '@/assets/placeholder_actor.webp'
 
 /**
 * Check if the image exists, and if not, use a generic image.
@@ -121,7 +121,7 @@ export const useMovieStore = defineStore('movies', {
                     },
                     title: media.name || media.title,
                     info: media.first_air_date || media.release_date,
-                    img: getImage(media.poster_path, poster_image_path, mock_default_fl)})
+                    img: getImage(media.poster_path, poster_image_path, placeholder_poster)})
             }
 
             // get random image for the banner
@@ -149,7 +149,7 @@ export const useMovieStore = defineStore('movies', {
                     },
                     title: media.name || media.title,
                     info: media.first_air_date || media.release_date,
-                    img: getImage(media.poster_path, poster_image_path, mock_default_fl)})
+                    img: getImage(media.poster_path, poster_image_path, placeholder_poster)})
             }
 
             this.in_theater_loading = false
@@ -187,7 +187,7 @@ export const useMovieStore = defineStore('movies', {
                             img: getImage(
                                 episode.still_path,
                                 "https://media.themoviedb.org/t/p/w227_and_h127_face/",
-                                mock_default_ep
+                                placeholder_episode
                             )
 
                         })
@@ -222,7 +222,7 @@ export const useMovieStore = defineStore('movies', {
                         img: getImage(
                             actor.profile_path,
                             "https://media.themoviedb.org/t/p/w138_and_h175_face/",
-                            mock_default_ac
+                            placeholder_actor
                         )
                     })
                 }
@@ -410,7 +410,7 @@ export const useMovieStore = defineStore('movies', {
                     },
                     title: media.name || media.title,
                     info: media.first_air_date || media.release_date,
-                    img:getImage(media.poster_path, poster_image_path, mock_default_fl)})
+                    img:getImage(media.poster_path, poster_image_path, placeholder_poster)})
             }
             console.log(this.medias_results)
 
