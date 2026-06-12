@@ -4,13 +4,11 @@ import { useMovieStore } from '@/stores/movieStore'
 
 const movieStore = useMovieStore()
 
-// état pour afficher/masquer les résultats
 const isOpen = ref(true)
 
-// référence du bloc
 const searchRef = ref(null)
 
-// détecter clic extérieur
+// Detecting an external click
 const handleClickOutside = (event) => {
   if (searchRef.value && !searchRef.value.contains(event.target)) {
     isOpen.value = false
@@ -22,11 +20,12 @@ onMounted(() => {
   document.addEventListener('click', handleClickOutside)
 })
 
+// close the search display
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
 })
 
-// rouvrir quand nouveaux résultats
+// reopen when new results
 watch(() => movieStore.search_movies, (newVal) => {
   if (newVal.length > 0) {
     isOpen.value = true

@@ -9,6 +9,9 @@ import mock_default_fl from '@/assets/mock_default_fl.webp'
 import mock_default_ep from '@/assets/mock_default_ep.webp'
 import mock_default_ac from '@/assets/mock_default_ac.webp'
 
+/**
+* Check if the image exists, and if not, use a generic image.
+* */
 function getImage(path, base, fallback) {
     if (!path || path === "null") return fallback
     return base + path
@@ -48,7 +51,7 @@ export const useMovieStore = defineStore('movies', {
         actors: [],
         episodes: [],
         media_loading: true,
-      
+
         type: "movie",
         genres: [],
         date: "",
@@ -71,6 +74,12 @@ export const useMovieStore = defineStore('movies', {
     }),
 
     actions: {
+        /**
+         * search medias
+         * @param type if it movie or series
+         * @param query search text field
+         * @returns {Promise<void>}
+         */
         async searchMedia(type, query) {
             if (!query || !query.trim()) {
                 this.search_movies = []
@@ -329,7 +338,12 @@ export const useMovieStore = defineStore('movies', {
             let response = await TMDBService.mediaAccountStates(type, mediaId)
             this.isFavorite = response.data.favorite
         },
-      
+
+        /**
+         * get genre by type
+         * @param type the type of medias
+         * @returns {Promise<void>}
+         */
         async fetchGenres(type) {
             try {
                 const res = await TMDBService.getGenres(type)
