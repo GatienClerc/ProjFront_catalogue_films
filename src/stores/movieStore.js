@@ -4,6 +4,21 @@ import TMDBService from '@/services/TMDBService'
 const banner_image_path = "https://media.themoviedb.org/t/p/w1920_and_h600_multi_faces_filter(duotone,00192f,00baff)"
 const poster_image_path = "https://media.themoviedb.org/t/p/w220_and_h330_face/"
 
+const sort = {
+    tv : {
+        date : "first_air_date",
+        name : "name",
+        popularity : "popularity",
+        note : "vote_average"
+    },
+    movie : {
+        date : "primary_release_date",
+        name : "title",
+        popularity : "popularity",
+        note : "vote_average"
+    }
+}
+
 export const useMovieStore = defineStore('movies', {
     state: () => ({
         search_movies: [],
@@ -21,7 +36,18 @@ export const useMovieStore = defineStore('movies', {
         director: {},
         actors: [],
         episodes: [],
-        media_loading: true
+        media_loading: true,
+
+        type: "movie",
+        genres: [],
+        date: "",
+        gte_lte: "after",
+        duration: [0,400],
+        note: [0,10],
+        checkAdult: false,
+
+        medias_results: [],
+        medias_loading: true
     }),
 
     actions: {
@@ -105,7 +131,7 @@ export const useMovieStore = defineStore('movies', {
          * @param type the type of the media (film or tv)
          * @returns {Promise<void>}
          */
-        async getMediaById(id, type){
+        async getMediaById(id, type, name){
             this.media_loading = true
 
             this.media = {}
@@ -121,7 +147,11 @@ export const useMovieStore = defineStore('movies', {
                     for (let i = 0; i < response.data.episodes.length; i++) {
                         const episode = response.data.episodes[i]
                         this.episodes.push({
-                            link: "",
+                            link: {
+                                name: 'display',
+                                params: { id: id },
+                                query: { type: type, title: name }
+                            },
                             title: episode.episode_number+". "+episode.name,
                             info: episode.air_date,
                             img:"https://media.themoviedb.org/t/p/w227_and_h127_face/"+episode.still_path
@@ -147,7 +177,11 @@ export const useMovieStore = defineStore('movies', {
                 for (let i = 0; i < response.data.cast.length; i++) {
                     const actor = response.data.cast[i]
                     this.actors.push({
-                        link: "",
+                        link: {
+                            name: 'display',
+                            params: { id: id },
+                            query: { type: type, title: name }
+                        },
                         title: actor.name,
                         info: actor.character,
                         img:"https://media.themoviedb.org/t/p/w138_and_h175_face/"+actor.profile_path
@@ -155,6 +189,75 @@ export const useMovieStore = defineStore('movies', {
                 }
             }
             this.media_loading = false
+        },
+
+        async fetchGenres(type) {
+            try {
+                const res = await TMDBService.getGenres(type)
+                this.genres = res.data.genres
+            } catch (error) {
+                console.error(error)
+            }
+        },
+
+        async fetchMedias(filters) {
+            this.medias_loading = true
+
+            this.medias_results = []
+            const filter = []
+
+            if (filters.date) {
+                if (filters.type === "tv") {
+                    if (filters.gte_lte === "after") {
+                        filter.push(`first_air_date.gte=${filters.date}`);
+                    } else {
+                        filter.push(`first_air_date.lte=${filters.date}`);
+                    }
+                } else {
+                    if (filters.gte_lte === "after") {
+                        filter.push(`primary_release_date.gte=${filters.date}`);
+                    } else {
+                        filter.push(`primary_release_date.lte=${filters.date}`);
+                    }
+                }
+            }
+
+            if (filters.genres?.length) {
+                filter.push(`with_genres=${filters.genres.join(",")}`);
+            }
+
+            filter.push(`include_adult=${filters.checkAdult}`);
+
+            filter.push(`vote_average.gte=${filters.note[0]}`);
+            filter.push(`vote_average.lte=${filters.note[1]}`);
+
+            filter.push(`with_runtime.gte=${filters.duration[0]}`);
+            filter.push(`with_runtime.lte=${filters.duration[1]}`);
+
+            const asc_desc = filters.asc ? ".asc" : ".desc";
+
+            console.log(filters.sort_by);
+
+            filter.push(`sort_by=${sort[filters.type][filters.sort_by]+asc_desc}`)
+
+            console.log(filter);
+
+            const response = await TMDBService.filterMedia(filters.type, filter, filters.page);
+            for (let i = 0; i < response.data.results.length; i++) {
+                const media = response.data.results[i]
+                this.medias_results.push({
+                    link: {
+                        name: 'display',
+                        params: { id: media.id },
+                        query: { type: "movie", title: media.name || media.title }
+                    },
+                    title: media.name || media.title,
+                    info: media.first_air_date || media.release_date,
+                    img:poster_image_path+media.poster_path})
+            }
+            console.log(this.medias_results)
+
+            this.medias_loading = false
         }
     }
 })

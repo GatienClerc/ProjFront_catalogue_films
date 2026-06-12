@@ -88,8 +88,8 @@ export default {
         let url = `/discover/${type}?language=fr&page=${page}`
 
         // Adds all the params to the URL
-        if (filters) for (let filter in filters) url += `&${filter.name}=${filter.value}`
-
+        if (filters) for (let filter of filters) url += `&${filter}`
+        console.log(url)
         return apiClient.get(url)
     },
 

@@ -11,9 +11,9 @@ let favorite = false
 const movieStore = useMovieStore()
 
 watch(
-    () => [route.params.id, route.query.type],
-    ([id, type]) => {
-      movieStore.getMediaById(id, type)
+    () => [route.params.id, route.query.type, route.query.title],
+    ([id, type, name]) => {
+      movieStore.getMediaById(id, type, name)
     },
     { immediate: true }
 )
