@@ -4,8 +4,8 @@
  * Author :                 Thierry Perroud
  * Creation date :          06.05.2026
  * Modified by :            Thierry Perroud
- * Modification date :      03.06.2026
- * Version :                0.6
+ * Modification date :      10.06.2026
+ * Version :                0.9
  **********************************************************************************************************************/
 /***********************************************************************************************************************
  * Imports
@@ -106,7 +106,7 @@ export default {
         if (mediaId === null || mediaId < 0) return JSON.parse('{"error": "Invalid media ID."}')
         if (type !== "movie" && type !== "tv") type = "movie"   // Defaults to movies
 
-        return apiClient.get(`/${type}/${mediaId}/credits`)
+        return apiClient.get(`/${type}/${mediaId}/credits?language=fr`)
     },
 
     /**
@@ -114,7 +114,7 @@ export default {
      * Route documentations: https://developer.themoviedb.org/reference/movie-details
      *                       https://developer.themoviedb.org/reference/tv-series-details
      *
-     * @param type Enum("movie", "tv")
+     * @param type Enum ("movie", "tv")
      * @param mediaId Integer representing the ID of the movie or TV show (must be 0 or more)
      * @param season Integer representing a TV show's season number (must be 1 or more)
      * @returns JSON
@@ -140,13 +140,13 @@ export default {
      * Returns a list of trending movie, TV shows and people based on the current day or current week
      * Route documentation: https://developer.themoviedb.org/reference/trending-all
      *
-     * @param time Enum("day", "week")
+     * @param time Enum ("day", "week")
      * @returns JSON
      */
     getTrendingMedias(time = "day") {
         if (time !== "day" && time !== "week") time = "day"
 
-        return apiClient.get(`/trending/all/${time}`)
+        return apiClient.get(`/trending/all/${time}?language=fr`)
     },
 
     /**
@@ -156,16 +156,17 @@ export default {
      * @returns JSON
      */
     getMoviesInTheatre() {
-        return apiClient.get(`/movie/now_playing`)
+        return apiClient.get(`/movie/now_playing?language=fr`)
     },
 
     /**
      * Returns a list of TV shows that are airing today
+     * Route documentation: https://developer.themoviedb.org/reference/tv-series-airing-today-list
      *
      * @returns JSON
      */
     getShowsAiringToday() {
-        return apiClient.get(`/tv/airing_today`)
+        return apiClient.get(`/tv/airing_today?language=fr`)
     },
 
     /**
@@ -184,20 +185,40 @@ export default {
      * Route documentation : https://developer.themoviedb.org/reference/account-add-favorite
      *
      * @param accountId Integer representing the ID of the account (must be 0 or more)
-     * @param type Enum("movie", "tv")
+     * @param type Enum ("movie", "tv")
      * @param mediaId Integer representing the ID of the movie or TV show (must be 0 or more)
      * @param choice Boolean
      * @returns JSON
      */
     manageFavorites(accountId, type = "movie", mediaId, choice = true) {
+        if (accountId === null || accountId < 0) return JSON.parse('{"error": "Invalid account ID"}')
+        if (mediaId === null || mediaId < 0) return JSON.parse('{"error": "Invalid media ID"}')
+        if (type !== "movie" && type !== "tv") type = "movie"   // Defaults to movies
+
         return apiClient.post(
             `/account/${accountId}/favorite`,
             {
                 media_type: type,
-                mediaId: mediaId,
+                media_id: mediaId,
                 favorite: choice
             }
         )
+    },
+
+    /**
+     * Returns whether or not a media is favorited, rated and added to the watchlist
+     * Route documentations: https://developer.themoviedb.org/reference/movie-account-states
+     *                       https://developer.themoviedb.org/reference/tv-series-account-states
+     *
+     * @param type Enum ("movie", "tv")
+     * @param mediaId Integer representing the ID of the movie or TV show (must be 0 or more)
+     * @returns JSON
+     */
+    mediaAccountStates(type = "movie", mediaId) {
+        if (mediaId === null || mediaId < 0) return JSON.parse('{"error": "Invalid media ID"}')
+        if (type !== "movie" && type !== "tv") type = "movie"   // Defaults to movies
+
+        return apiClient.get(`/${type}/${mediaId}/account_states`)
     },
 
     /**
@@ -206,18 +227,22 @@ export default {
      *                       https://developer.themoviedb.org/reference/account-favorite-tv
      *
      * @param accountId Integer representing the ID of the account (must be 0 or more)
-     * @param type Enum("movies", "tv")
+     * @param type Enum ("movies", "tv")
      * @returns {Promise<axios.AxiosResponse<any>>}
      */
     getFavoriteMedia(accountId, type = "movies") {
-        return apiClient.get(`/account/${accountId}/favorite/${type}`)
+        if (accountId === null || accountId < 0) return JSON.parse('{"error": "Invalid account ID"}')
+        if (type !== "movie" && type !== "tv") type = "movie"   // Defaults to movies
+
+        return apiClient.get(`/account/${accountId}/favorite/${type}?language=fr`)
     },
+
     /**
-     * return the videos linked to the media
+     * Returns the videos linked to the media
      * Route documentations: https://developer.themoviedb.org/reference/tv-series-videos
      *                       https://developer.themoviedb.org/reference/movie-videos
      *
-     * @param type Enum("movie", "tv")
+     * @param type Enum ("movie", "tv")
      * @param mediaId Integer representing the ID of the movie or TV show (must be 0 or more)
      * @returns {Promise<axios.AxiosResponse<any>>|any}
      */
@@ -225,7 +250,6 @@ export default {
         if (mediaId === null || mediaId < 0) return JSON.parse('{"error": "Invalid media ID."}')
         if (type !== "movie" && type !== "tv") type = "movie"   // Defaults to movies
 
-        return apiClient.get(`/${type}/${mediaId}/videos`)
+        return apiClient.get(`/${type}/${mediaId}/videos?language=fr`)
     }
-
 }
