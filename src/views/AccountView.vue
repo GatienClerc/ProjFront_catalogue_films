@@ -18,10 +18,11 @@ watch(
 </script>
 
 <template>
-  <main>
+  <main class="p-4">
     <div>
       <h2>Historique</h2>
       <carousel v-if="movieStore.history.length > 0" source="history" />
+      <h3 v-else>Aucun historique trouvé</h3>
     </div>
     <div v-show="TMDBToken">
       <h2>Favoris</h2>
@@ -33,6 +34,7 @@ watch(
         <h3>Séries</h3>
         <carousel source="favoriteShows" />
       </div>
+      <h3 v-if="movieStore.favoriteMovies.length === 0 && movieStore.favoriteShows.length === 0">Aucun favoris trouvé</h3>
     </div>
   </main>
 </template>
