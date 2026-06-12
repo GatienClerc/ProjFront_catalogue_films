@@ -89,7 +89,6 @@ export default {
 
         // Adds all the params to the URL
         if (filters) for (let filter of filters) url += `&${filter}`
-        console.log(url)
         return apiClient.get(url)
     },
 
