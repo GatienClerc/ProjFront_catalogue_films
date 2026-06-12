@@ -15,6 +15,7 @@ const sort_by = ref('popularity')
 
 const page = ref(1)
 
+
 function toggleSort() {
   sort_asc.value = !sort_asc.value;
 }
