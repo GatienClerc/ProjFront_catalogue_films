@@ -393,11 +393,7 @@ export const useMovieStore = defineStore('movies', {
 
             const asc_desc = filters.asc ? ".asc" : ".desc";
 
-            console.log(filters.sort_by);
-
             filter.push(`sort_by=${sort[filters.type][filters.sort_by]+asc_desc}`)
-
-            console.log(filter);
 
             const response = await TMDBService.filterMedia(filters.type, filter, filters.page);
             for (let i = 0; i < response.data.results.length; i++) {
@@ -412,7 +408,6 @@ export const useMovieStore = defineStore('movies', {
                     info: media.first_air_date || media.release_date,
                     img:getImage(media.poster_path, poster_image_path, placeholder_poster)})
             }
-            console.log(this.medias_results)
 
             this.medias_loading = false
         }
