@@ -232,7 +232,7 @@ export default {
      */
     getFavoriteMedia(accountId, type = "movies") {
         if (accountId === null || accountId < 0) return JSON.parse('{"error": "Invalid account ID"}')
-        if (type !== "movie" && type !== "tv") type = "movie"   // Defaults to movies
+        if (type !== "movies" && type !== "tv") type = "movies"   // Defaults to movies
 
         return apiClient.get(`/account/${accountId}/favorite/${type}?language=fr`)
     },
