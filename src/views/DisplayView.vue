@@ -3,6 +3,7 @@ import { useRoute } from 'vue-router'
 import Carousel from '@/components/Carousel.vue'
 import { useMovieStore } from '@/stores/movieStore'
 import { watch } from 'vue'
+import mock_default_flb from '@/assets/mock_default_flb.webp'
 
 const route = useRoute()
 const poster_image_path = 'https://image.tmdb.org/t/p/w500'
@@ -17,6 +18,11 @@ watch(
     },
     { immediate: true }
 )
+
+function getImage(path, base, fallback) {
+  if (!path || path === "null") return fallback
+  return base + path
+}
 </script>
 
 <template>
@@ -25,7 +31,7 @@ watch(
       <!-- Poster -->
       <div class="col-12 col-md-4">
         <img
-            :src="poster_image_path+movieStore.media.poster_path" alt="Affiche du film" class="img-fluid rounded shadow w-100 poster"/>
+            :src="getImage(movieStore.media.poster_path, poster_image_path, mock_default_flb)" alt="Affiche du film" class="img-fluid rounded shadow w-100 poster"/>
       </div>
       <!-- Movie Info -->
       <div class="col-12 col-md-8">
@@ -72,10 +78,10 @@ watch(
         </div>
       </div>
     </div>
-    <h1 class="m-5 mb-1">Acteurs</h1>
-    <Carousel source="actors"></Carousel>
-    <h1 class="m-5 mb-1" v-if="route.query.type==='tv'">Episodes</h1>
-    <Carousel source="episodes" v-if="route.query.type==='tv'"></Carousel>
+    <h1 class="m-5 mb-1" v-if="movieStore.actors.length > 0">Acteurs</h1>
+    <Carousel v-if="movieStore.actors.length > 0" source="actors"></Carousel>
+    <h1 class="m-5 mb-1" v-if="route.query.type==='tv' && movieStore.episodes.length > 0">Episodes</h1>
+    <Carousel source="episodes" v-if="route.query.type==='tv' && movieStore.episodes.length > 0"></Carousel>
   </main>
 </template>
 

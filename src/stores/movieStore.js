@@ -271,7 +271,7 @@ export const useMovieStore = defineStore('movies', {
                     },
                     title: media.name || media.title,
                     info: media.first_air_date || media.release_date,
-                    img:poster_image_path+media.poster_path})
+                    img:getImage(media.poster_path, poster_image_path, mock_default_fl)})
             }
             console.log(this.medias_results)
 
